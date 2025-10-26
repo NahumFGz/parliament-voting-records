@@ -1,0 +1,124 @@
+experiments:
+  # --- YOLO11n ---
+  - name: yolo11n_img320_bs32
+    execute: true
+    params:
+      weights: yolo11n.pt
+      imgsz: 320
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11n_img480_bs32
+    execute: true
+    params:
+      weights: yolo11n.pt
+      imgsz: 480
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11n_img640_bs32
+    execute: true
+    params:
+      weights: yolo11n.pt
+      imgsz: 640
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11n_img640_bs16
+    execute: true
+    params:
+      weights: yolo11n.pt
+      imgsz: 640
+      batch: 16
+      epochs: 50
+      device: 0
+      patience: 5
+
+  # --- YOLO11s ---
+  - name: yolo11s_img320_bs32
+    execute: true
+    params:
+      weights: yolo11s.pt
+      imgsz: 320
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11s_img480_bs32
+    execute: true
+    params:
+      weights: yolo11s.pt
+      imgsz: 480
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11s_img640_bs32
+    execute: true
+    params:
+      weights: yolo11s.pt
+      imgsz: 640
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11s_img640_bs16
+    execute: true
+    params:
+      weights: yolo11s.pt
+      imgsz: 640
+      batch: 16
+      epochs: 50
+      device: 0
+      patience: 5
+
+  # --- YOLO11l ---
+  - name: yolo11l_img320_bs32
+    execute: true
+    params:
+      weights: yolo11l.pt
+      imgsz: 320
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11l_img480_bs32
+    execute: true
+    params:
+      weights: yolo11l.pt
+      imgsz: 480
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  # --- YOLO11x ---
+  - name: yolo11x_img320_bs32
+    execute: true
+    params:
+      weights: yolo11x.pt
+      imgsz: 320
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
+
+  - name: yolo11x_img480_bs32
+    execute: true
+    params:
+      weights: yolo11x.pt
+      imgsz: 480
+      batch: 32
+      epochs: 50
+      device: 0
+      patience: 5
