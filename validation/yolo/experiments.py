@@ -14,8 +14,8 @@ MAGENTA = "\033[35m"
 
 # Configuración de rutas
 CONFIG_PATH = "experiments_yolo.yml"
-BASE_DATA_PATH = "/home/nahumfg/Projects/GithubProjects/tesismaestriauni-launcher/publicdata-yolo-ocr/data/g_labelstudio_split_folds/votacion"
-PROJECT_DIR = "/home/nahumfg/Projects/GithubProjects/tesismaestriauni-launcher/publicdata-yolo-ocr/validation_ic/yolo/experimentos_votacion"
+BASE_DATA_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/data/dataset_etiquetado_zonas/e_split_cross_valid"
+PROJECT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo"
 
 # Cargar configuración de experimentos
 with open(CONFIG_PATH, "r") as f:

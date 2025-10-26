@@ -2,6 +2,9 @@
 data/**/*.jpg
 data/**/*.png
 
+# Modelos
+validation/**/*.pt
+
 # Env
 .env
 

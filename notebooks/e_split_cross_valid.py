@@ -233,7 +233,7 @@ names:
 create_kfold_datasets(
     images_dir="../data/dataset_etiquetado_zonas/d_etiquetados/images",
     labels_dir="../data/dataset_etiquetado_zonas/d_etiquetados/labels",
-    output_base_dir="../data/dataset_etiquetado_zonas/e_split",
+    output_base_dir="../data/dataset_etiquetado_zonas/e_split_cross_valid",
     dataset_name="",
     k_folds=10,
     seed=42,
@@ -242,7 +242,7 @@ create_kfold_datasets(
 # B. Copiar archivos generales para todos los folds de Asistencia
 copiar_archivos_generales_folds(
     origen_dir="../data/dataset_etiquetado_zonas/d_etiquetados",
-    destino_base_dir="../data/dataset_etiquetado_zonas/e_split",
+    destino_base_dir="../data/dataset_etiquetado_zonas/e_split_cross_valid",
     dataset_name="",
     archivos=["classes.txt", "notes.json"],
     k_folds=10,
@@ -251,7 +251,7 @@ copiar_archivos_generales_folds(
 # C. Generar dataset.yml para todos los folds de Asistencia
 generar_dataset_yaml_folds(
     origen_dir="../data/dataset_etiquetado_zonas/d_etiquetados",
-    destino_base_dir="../data/dataset_etiquetado_zonas/e_split",
+    destino_base_dir="../data/dataset_etiquetado_zonas/e_split_cross_valid",
     dataset_name="",
     k_folds=10,
 )
