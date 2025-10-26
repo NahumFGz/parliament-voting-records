@@ -8,3 +8,8 @@ pillow
 matplotlib
 scipy
 pytesseract
+torch
+torchvision
+ultralytics
+label-studio-sdk
+python-dotenv
