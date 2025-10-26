@@ -2,8 +2,8 @@ import os
 
 from PIL import Image
 
-input_path = "../data/b_originales"
-output_path = "../data/c_comprimidos"
+input_path = "../data/dataset_etiquetado_zonas/a_originales"
+output_path = "../data/dataset_etiquetado_zonas/b_comprimidos"
 
 # Crear carpeta de salida si no existe
 os.makedirs(output_path, exist_ok=True)
