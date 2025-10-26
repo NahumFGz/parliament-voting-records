@@ -1,0 +1,7 @@
+jupyter
+requests
+pandas
+numpy
+openpyxl
+opencv-python
+pillow
