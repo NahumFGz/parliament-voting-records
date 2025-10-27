@@ -5,6 +5,7 @@ data/**/*.pdf
 data/**/*.cache
 
 # Modelos y cache
+notebooks/**/*pth
 validation/**/*.pt
 validation/**/*.cache
 
