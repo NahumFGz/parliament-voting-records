@@ -15,9 +15,9 @@ MAX_WORKERS = 5
 TIMEOUT = 200  # segundos
 
 # 📂 Archivos de entrada
-DATA_FILE = "nombres_archivos.csv"
+DATA_FILE = "faltantes.csv"
 LOG_FILE = "download_log.txt"
-DOWNLOAD_DIR = "downloads"
+DOWNLOAD_DIR = "../../data/scraping/a_pdfs"
 
 # Crear carpeta de destino si no existe
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
