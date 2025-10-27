@@ -3,6 +3,9 @@
 - Pythorch
   pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
 
+- PdfToImage
+  sudo apt update && sudo apt install poppler-utils -y
+
 - Otros OCR
   pip install pytesseract
   sudo apt install tesseract-ocr tesseract-ocr-spa
