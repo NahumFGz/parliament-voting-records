@@ -5,8 +5,8 @@ import cv2
 from ultralytics import YOLO
 
 # ⚙️ Configuraciones para votación
-input_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/a_originales"
-output_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_divisiones"
+input_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/c_enderezados"
+output_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/d_divisiones"
 model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo/experiments/yolo11n_img480_bs32_fold_9/weights/best.pt"
 
 # 🧠 Cargar modelo YOLO
