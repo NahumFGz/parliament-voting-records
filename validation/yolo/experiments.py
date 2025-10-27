@@ -94,6 +94,17 @@ for fold_idx, fold in enumerate(folds, start=1):
                 project=PROJECT_DIR,
                 name=experiment_name,
                 verbose=True,
+                # Data Augmentation
+                flipud=0.5,
+                fliplr=0.5,
+                # Parámetros para mejorar detección
+                conf=0.001,  # Umbral de confianza muy bajo durante entrenamiento
+                iou=0.7,  # IOU threshold para NMS
+                max_det=3,  # Máximo 3 detecciones por imagen
+                single_cls=False,  # Mantener multi-clase
+                # Más augmentation relevante para documentos
+                degrees=0.0,  # Sin rotación (documentos siempre rectos)
+                mosaic=0.0,  # Desactivar mosaic (no apto para documentos completos)
             )
 
             print(f"{GREEN}   ✅ Completado: {experiment_name}{RESET}")
