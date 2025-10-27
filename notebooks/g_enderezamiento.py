@@ -171,7 +171,7 @@ if __name__ == "__main__":
         output_path=output_path,
         rango_angulos=(-5, 5),  # Busca inclinaciones entre -5° y +5°
         paso=0.1,  # Precisión de 0.1 grados
-        n_workers=14,  # None = usar todos los CPUs disponibles
+        n_workers=12,  # None = usar todos los CPUs disponibles
         # 1 = secuencial (sin paralelización)
         # 4 = usar 4 hilos
         # 8 = usar 8 hilos

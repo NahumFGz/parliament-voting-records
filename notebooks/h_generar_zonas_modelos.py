@@ -11,10 +11,10 @@ model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/
 
 # 🎯 Configuraciones de márgenes verticales (% del alto de la zona)
 # Porcentaje de expansión en el eje Y para cada tipo de zona
-MARGEN_ENCABEZADO_ABAJO = 0.05  # 5% hacia abajo (0.05 = 5%)
-MARGEN_COLUMNAS_ARRIBA = 0.05  # 5% hacia arriba
-MARGEN_COLUMNAS_ABAJO = 0.05  # 5% hacia abajo
-MARGEN_PIE_ARRIBA = 0.05  # 5% hacia arriba
+MARGEN_ENCABEZADO_ABAJO = 0.02  # 5% hacia abajo (0.05 = 5%)
+MARGEN_COLUMNAS_ARRIBA = 0.03  # 5% hacia arriba
+MARGEN_COLUMNAS_ABAJO = 0.03  # 5% hacia abajo
+MARGEN_PIE_ARRIBA = 0.02  # 5% hacia arriba
 
 
 def aplicar_margenes_verticales(x_min, y_min, x_max, y_max, label, img_height):
