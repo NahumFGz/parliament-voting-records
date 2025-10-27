@@ -1,6 +1,7 @@
-# Imágenes
+# Imágenes y PDFs
 data/**/*.jpg
 data/**/*.png
+data/**/*.pdf
 data/**/*.cache
 
 # Modelos y cache
