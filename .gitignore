@@ -1,9 +1,11 @@
 # Imágenes
 data/**/*.jpg
 data/**/*.png
+data/**/*.cache
 
-# Modelos
+# Modelos y cache
 validation/**/*.pt
+validation/**/*.cache
 
 # Env
 .env

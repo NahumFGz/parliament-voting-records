@@ -26,7 +26,18 @@ experiments = [exp for exp in config["experiments"] if exp.get("execute", True)]
 total_experiments = len(experiments)
 
 # Definir los folds disponibles
-folds = ["fold_1", "fold_2", "fold_3", "fold_4", "fold_5"]
+folds = [
+    "fold_1",
+    "fold_2",
+    "fold_3",
+    "fold_4",
+    "fold_5",
+    "fold_6",
+    "fold_7",
+    "fold_8",
+    "fold_9",
+    "fold_10",
+]
 total_folds = len(folds)
 
 # Calcular total de ejecuciones

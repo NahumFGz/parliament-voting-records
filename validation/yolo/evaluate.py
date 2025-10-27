@@ -98,7 +98,18 @@ def calculate_confidence_interval(data, confidence=0.95):
 def collect_experiment_results():
     """Recopilar resultados de todos los experimentos"""
     experiments = load_experiment_config()
-    folds = ["fold_1", "fold_2", "fold_3", "fold_4", "fold_5"]
+    folds = [
+        "fold_1",
+        "fold_2",
+        "fold_3",
+        "fold_4",
+        "fold_5",
+        "fold_6",
+        "fold_7",
+        "fold_8",
+        "fold_9",
+        "fold_10",
+    ]
 
     results = {}
 
