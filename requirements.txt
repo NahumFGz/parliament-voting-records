@@ -14,3 +14,5 @@ ultralytics
 label-studio-sdk
 python-dotenv
 scikit-learn
+beautifulsoup4
+selenium
