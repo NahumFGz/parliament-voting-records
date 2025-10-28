@@ -94,9 +94,7 @@ with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         for index, row in df_to_download.iterrows()
     }
 
-    for future in tqdm[Future[tuple[Any, Literal[True], None] | tuple[Any, Literal[False], str]]](
-        as_completed(futures), total=len(futures), desc="📥 Descargando archivos"
-    ):
+    for future in tqdm(as_completed(futures), total=len(futures), desc="📥 Descargando archivos"):
         index, success, error = future.result()
         if success:
             # Guardar el índice del siguiente archivo
