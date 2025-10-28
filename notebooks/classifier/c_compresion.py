@@ -3,8 +3,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from PIL import Image
 
-input_path = "../data/procesamiento_todas_votaciones/a_originales"
-output_path = "../data/procesamiento_todas_votaciones/b_comprimidos"
+input_path = (
+    "/home/nahumfg/GithubProjects/parliament-voting-records/data/classiffier/a_classified/votacion"
+)
+output_path = (
+    "/home/nahumfg/GithubProjects/parliament-voting-records/data/classiffier/b_comprimidos"
+)
 
 # Crear carpeta de salida si no existe
 os.makedirs(output_path, exist_ok=True)
