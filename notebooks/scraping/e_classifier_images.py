@@ -93,6 +93,9 @@ def main():
     print(f"🏷️  Clases: {CLASS_NAMES}")
     print(f"💻 Device: {DEVICE}\n")
 
+    # Crear carpeta de salida si no existe
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
+
     # Listar imágenes
     images = list_images_in_path(INPUT_PATH)
     total_images = len(images)

@@ -24,18 +24,14 @@ def process_pdf(file: str):
     total_pages = len(images)
     base_name = file.rsplit(".", 1)[0]
 
-    # Crear carpeta para el PDF
-    pdf_folder = os.path.join(IMAGES_FOLDER, base_name)
-    os.makedirs(pdf_folder, exist_ok=True)
-
     for i, image in enumerate(images, start=1):
         # Convertir a escala de grises si está configurado
         if CONVERT_TO_GRAYSCALE:
             image = image.convert("L")
 
-        # Nombre de archivo con formato page001.jpg, page002.jpg, etc.
-        image_filename = f"page{str(i).zfill(3)}.jpg"
-        image_path = os.path.join(pdf_folder, image_filename)
+        # Nombre de archivo con formato nombre_del_pdf_page001_.jpg
+        image_filename = f"{base_name}_page{str(i).zfill(3)}_.jpg"
+        image_path = os.path.join(IMAGES_FOLDER, image_filename)
 
         # Guardar con compresión JPEG
         image.save(image_path, "JPEG", quality=JPEG_QUALITY, optimize=True)
