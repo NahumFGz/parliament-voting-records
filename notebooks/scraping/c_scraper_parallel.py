@@ -6,15 +6,18 @@ warnings.filterwarnings("ignore")
 
 
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
 import requests
 from tqdm import tqdm
 
-# 🔧 Parámetro: número de descargas simultáneas
-MAX_WORKERS = 5
-TIMEOUT = 200  # segundos
+# 🔧 Parámetros de descarga
+MAX_WORKERS = 10  # número de descargas simultáneas
+REQUEST_TIMEOUT = 200  # segundos máximos esperando respuesta del servidor por petición
+MAX_RETRIES = 5  # número de reintentos por archivo
+RETRY_DELAY = 60  # segundos de espera entre reintentos
 
 # 📂 Archivos de entrada
 DATA_FILE = "nuevos_documentos.csv"
@@ -57,22 +60,31 @@ total_archivos = len(df_result)
 df_to_download = df_result.iloc[last_index:]
 
 
-# Función de descarga
+# Función de descarga con reintentos
 def download_file(index, row):
     file_name = row["file_name"]
     file_path = os.path.join(DOWNLOAD_DIR, file_name)
     url = row["clean_link"]
 
-    try:
-        response = requests.get(url, verify=False, timeout=TIMEOUT)
-        if response.status_code == 200:
-            with open(file_path, "wb") as f:
-                f.write(response.content)
-            return index, True, None
-        else:
-            return index, False, f"HTTP {response.status_code}"
-    except requests.exceptions.RequestException as e:
-        return index, False, str(e)
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = requests.get(url, verify=False, timeout=REQUEST_TIMEOUT)
+            if response.status_code == 200:
+                with open(file_path, "wb") as f:
+                    f.write(response.content)
+                return index, True, None
+            else:
+                last_error = f"HTTP {response.status_code}"
+        except requests.exceptions.RequestException as e:
+            last_error = str(e)
+
+        # Si no es el último intento, esperar antes de reintentar
+        if attempt < MAX_RETRIES:
+            time.sleep(RETRY_DELAY)
+
+    # Si llegamos aquí, todos los intentos fallaron
+    return index, False, f"Falló después de {MAX_RETRIES} intentos. Último error: {last_error}"
 
 
 # Descarga paralela con barra de progreso
