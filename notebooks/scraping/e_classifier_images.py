@@ -8,11 +8,11 @@ from torchvision import models, transforms
 
 # ========== VARIABLES GLOBALES ==========
 INPUT_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/data/scraping/b_extract_images"
-OUTPUT_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/data/classiffier/a_classified"
+OUTPUT_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/data/scraping/c_classified"
 
 MODEL_NAME = "resnet50"
 CLASS_NAMES = ["asistencia", "otros", "votacion"]
-MODEL_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/notebooks/classifier/final_model_weights.pth"
+MODEL_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/notebooks/scraping/final_model_weights.pth"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
