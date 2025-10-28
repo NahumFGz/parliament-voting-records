@@ -163,8 +163,8 @@ def enderezar_carpeta(input_path, output_path, rango_angulos=(-5, 5), paso=0.1, 
 # ============================================
 
 if __name__ == "__main__":
-    input_path = "../data/dataset_etiquetado_zonas/b_comprimidos"
-    output_path = "../data/dataset_etiquetado_zonas/c_enderezados"
+    input_path = "../../data/dataset_etiquetado_columnas/a_originales"
+    output_path = "../../data/dataset_etiquetado_columnas/b_enderezados"
 
     enderezar_carpeta(
         input_path=input_path,
