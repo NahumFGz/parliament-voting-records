@@ -1,4 +1,6 @@
+import multiprocessing
 import os
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import cv2
@@ -8,6 +10,10 @@ from ultralytics import YOLO
 input_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/a_originales"
 output_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
 model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo/experiments/yolo11n_img480_bs32_fold_9/weights/best.pt"
+
+# 🔧 Configuración de paralelización
+# Si es 0, procesa secuencialmente. Si > 0, usa ese número de workers
+NUM_WORKERS = 8  # Puedes cambiar este valor según necesites
 
 # 🎯 Configuraciones de márgenes verticales (% del alto de la zona)
 # Porcentaje de expansión en el eje Y para cada tipo de zona
@@ -57,19 +63,21 @@ def aplicar_margenes_verticales(x_min, y_min, x_max, y_max, label, img_height):
     return x_min, y_min, x_max, y_max
 
 
-# 🧠 Cargar modelo YOLO
-model = YOLO(model_path)
+def procesar_imagen(args):
+    """
+    Procesa una imagen individual: detecta zonas, aplica márgenes y guarda recortes.
 
-# 📂 Crear carpeta destino si no existe
-os.makedirs(output_dir, exist_ok=True)
+    Args:
+        args: Tupla con (idx, img_file, input_dir, output_dir, model_path, total_imgs)
 
-# 📋 Listar imágenes válidas
-img_files = [f for f in os.listdir(input_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
-total_imgs = len(img_files)
-print(f"📦 Total de imágenes detectadas: {total_imgs}")
+    Returns:
+        str: Mensaje de estado del procesamiento
+    """
+    idx, img_file, input_dir, output_dir, model_path, total_imgs = args
 
-# 🔁 Procesar imágenes
-for idx, img_file in enumerate(img_files, start=1):
+    # Cargar modelo YOLO en cada proceso
+    model = YOLO(model_path)
+
     if idx % 100 == 0 or idx == 1:
         print(f"\n📊 Progreso: {idx}/{total_imgs} imágenes procesadas")
 
@@ -77,8 +85,7 @@ for idx, img_file in enumerate(img_files, start=1):
     image_bgr = cv2.imread(image_path)
 
     if image_bgr is None:
-        print(f"[⚠️] No se pudo leer la imagen: {image_path}")
-        continue
+        return f"[⚠️] No se pudo leer la imagen: {image_path}"
 
     # 📍 Predecir zonas
     results = model.predict(source=image_bgr, conf=0.25)
@@ -113,3 +120,51 @@ for idx, img_file in enumerate(img_files, start=1):
             # Guardar recorte
             zona_path = os.path.join(img_output_dir, f"{label}_{i+1}.jpg")
             cv2.imwrite(zona_path, zona)
+
+    return f"✅ Procesada: {img_file}"
+
+
+# 📂 Crear carpeta destino si no existe
+os.makedirs(output_dir, exist_ok=True)
+
+# 📋 Listar imágenes válidas
+img_files = [f for f in os.listdir(input_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+total_imgs = len(img_files)
+print(f"📦 Total de imágenes detectadas: {total_imgs}")
+
+# 🔧 Calcular número de workers óptimo
+max_workers = None
+if NUM_WORKERS > 0:
+    cpu_count = multiprocessing.cpu_count()
+    max_available = max(1, cpu_count - 2)  # Dejar 2 CPUs libres
+    max_workers = min(NUM_WORKERS, max_available)
+    print(
+        f"🚀 Modo paralelo activado: usando {max_workers} workers (CPUs disponibles: {cpu_count})"
+    )
+else:
+    print(f"🐌 Modo secuencial activado")
+
+# 🔁 Procesar imágenes
+# Preparar argumentos para cada imagen
+args_list = [
+    (idx, img_file, input_dir, output_dir, model_path, total_imgs)
+    for idx, img_file in enumerate(img_files, start=1)
+]
+
+if NUM_WORKERS == 0:
+    # Modo secuencial: procesar una por una
+    for args in args_list:
+        resultado = procesar_imagen(args)
+        if "⚠️" in resultado:
+            print(resultado)
+else:
+    # Modo paralelo: usar ProcessPoolExecutor
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        resultados = executor.map(procesar_imagen, args_list)
+
+        # Mostrar resultados (opcional, para ver errores)
+        for resultado in resultados:
+            if "⚠️" in resultado:
+                print(resultado)
+
+print(f"\n✅ Procesamiento completado: {total_imgs} imágenes")
