@@ -17,7 +17,7 @@ MAX_WORKERS = 5
 TIMEOUT = 200  # segundos
 
 # 📂 Archivos de entrada
-DATA_FILE = "faltantes.csv"
+DATA_FILE = "nuevos_documentos.csv"
 LOG_FILE = "download_log.txt"
 DOWNLOAD_DIR = "../../data/scraping/a_pdfs"
 
