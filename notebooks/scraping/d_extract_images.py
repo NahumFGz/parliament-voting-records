@@ -9,20 +9,37 @@ IMAGES_FOLDER = "../../data/scraping/b_extract_images"
 # Número de procesos paralelos
 NUM_WORKERS = 12  # 🔧 Ajusta según tus núcleos disponibles
 
+# Configuración de compresión y procesamiento de imágenes
+DPI = 300  # 🔧 Resolución de extracción del PDF (200=básico, 300=estándar, 400+=alta calidad)
+JPEG_QUALITY = 90  # 🔧 Calidad de compresión JPEG (1-100, donde 100 es máxima calidad)
+CONVERT_TO_GRAYSCALE = True  # 🔧 True para convertir a escala de grises, False para mantener color
+
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
 
 
 def process_pdf(file: str):
     """Convierte un PDF en imágenes y devuelve un resumen del progreso."""
     pdf_path = os.path.join(PDFS_FOLDER, file)
-    images = convert_from_path(pdf_path)
+    images = convert_from_path(pdf_path, dpi=DPI)
     total_pages = len(images)
     base_name = file.rsplit(".", 1)[0]
 
+    # Crear carpeta para el PDF
+    pdf_folder = os.path.join(IMAGES_FOLDER, base_name)
+    os.makedirs(pdf_folder, exist_ok=True)
+
     for i, image in enumerate(images, start=1):
-        page_str = f"_page{str(i)}_"
-        image_filename = f"{base_name}{page_str}.png"
-        image.save(os.path.join(IMAGES_FOLDER, image_filename))
+        # Convertir a escala de grises si está configurado
+        if CONVERT_TO_GRAYSCALE:
+            image = image.convert("L")
+
+        # Nombre de archivo con formato page001.jpg, page002.jpg, etc.
+        image_filename = f"page{str(i).zfill(3)}.jpg"
+        image_path = os.path.join(pdf_folder, image_filename)
+
+        # Guardar con compresión JPEG
+        image.save(image_path, "JPEG", quality=JPEG_QUALITY, optimize=True)
+
         progress = (i / total_pages) * 100
         print(f"   🖼️ {file}: Página {i}/{total_pages} ({progress:.1f}%)")
 
