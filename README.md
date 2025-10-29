@@ -7,7 +7,10 @@
   sudo apt update && sudo apt install poppler-utils -y
 
 - Otros OCR
-  pip install pytesseract
+  pip install pytesseract easyocr  
+  pip install 'python-doctr[torch]'  
+  pip install paddleocr==2.10.0  
+  pip install paddlepaddle==2.6.2  
   sudo apt install tesseract-ocr tesseract-ocr-spa
 
 - Orden de notebooks y data
