@@ -14,10 +14,11 @@ model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/
 # 🏷️ Prefijo para las imágenes generadas
 PREFIX = "colyolo_"
 
-# 🎯 Configuraciones de márgenes verticales (% del alto de la zona)
-# Porcentaje de expansión en el eje Y para todas las zonas
+# 🎯 Configuraciones de márgenes (% del alto/ancho de la zona)
 MARGEN_ARRIBA = 0.02  # 2% hacia arriba (0.02 = 2%)
 MARGEN_ABAJO = 0.02  # 2% hacia abajo (0.02 = 2%)
+MARGEN_IZQUIERDA = 0.00  # 2% hacia la izquierda (0.02 = 2%)
+MARGEN_DERECHA = 0.00  # 2% hacia la derecha (0.02 = 2%)
 
 # 🔧 Configuración de paralelización
 NUM_WORKERS = 8  #  Si es 0, procesa secuencialmente. Si > 0, usa ese número de workers
@@ -147,9 +148,9 @@ def ejecutar_procesamiento(args_list, max_workers):
 # ==================== FUNCIONES DE PROCESAMIENTO ====================
 
 
-def aplicar_margenes_verticales(x_min, y_min, x_max, y_max, img_height, img_width):
+def aplicar_margenes(x_min, y_min, x_max, y_max, img_height, img_width):
     """
-    Aplica márgenes verticales a una zona detectada.
+    Aplica márgenes horizontales y verticales a una zona detectada.
 
     Args:
         x_min, y_min, x_max, y_max: Coordenadas de la zona
@@ -157,19 +158,26 @@ def aplicar_margenes_verticales(x_min, y_min, x_max, y_max, img_height, img_widt
         img_width: Ancho de la imagen completa
 
     Returns:
-        Tupla (x_min, y_min_ajustado, x_max, y_max_ajustado)
+        Tupla (x_min_ajustado, y_min_ajustado, x_max_ajustado, y_max_ajustado)
     """
     alto_zona = y_max - y_min
+    ancho_zona = x_max - x_min
 
-    # Calcular incrementos
+    # Calcular incrementos verticales
     incremento_arriba = int(alto_zona * MARGEN_ARRIBA)
     incremento_abajo = int(alto_zona * MARGEN_ABAJO)
 
+    # Calcular incrementos horizontales
+    incremento_izquierda = int(ancho_zona * MARGEN_IZQUIERDA)
+    incremento_derecha = int(ancho_zona * MARGEN_DERECHA)
+
     # Aplicar márgenes asegurando que no salgan de los límites de la imagen
+    x_min_ajustado = max(0, x_min - incremento_izquierda)
+    x_max_ajustado = min(x_max + incremento_derecha, img_width)
     y_min_ajustado = max(0, y_min - incremento_arriba)
     y_max_ajustado = min(y_max + incremento_abajo, img_height)
 
-    return x_min, y_min_ajustado, x_max, y_max_ajustado
+    return x_min_ajustado, y_min_ajustado, x_max_ajustado, y_max_ajustado
 
 
 def procesar_imagen(args):
@@ -211,8 +219,8 @@ def procesar_imagen(args):
             x_min, y_min, x_max, y_max = map(int, box.xyxy[0])
             label = labels[int(box.cls[0])]
 
-            # Aplicar márgenes verticales
-            x_min, y_min, x_max, y_max = aplicar_margenes_verticales(
+            # Aplicar márgenes horizontales y verticales
+            x_min, y_min, x_max, y_max = aplicar_margenes(
                 x_min, y_min, x_max, y_max, img_height, img_width
             )
 
