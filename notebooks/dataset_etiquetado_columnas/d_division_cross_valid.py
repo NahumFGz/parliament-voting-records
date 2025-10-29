@@ -229,7 +229,7 @@ names:
         print(f"✅ Fold {fold_num} - Archivo '{output_file}' creado en '{yaml_path}'")
 
 
-# A. Crear 10-fold cross validation para Asistencia
+# A. Crear 10-fold cross validation
 create_kfold_datasets(
     images_dir="../../data/dataset_etiquetado_columnas/c_etiquetados/images",
     labels_dir="../../data/dataset_etiquetado_columnas/c_etiquetados/labels",
@@ -239,7 +239,7 @@ create_kfold_datasets(
     seed=42,
 )
 
-# B. Copiar archivos generales para todos los folds de Asistencia
+# B. Copiar archivos generales para todos los folds
 copiar_archivos_generales_folds(
     origen_dir="../../data/dataset_etiquetado_columnas/c_etiquetados",
     destino_base_dir="../../data/dataset_etiquetado_columnas/d_split_cross_valid",
@@ -248,7 +248,7 @@ copiar_archivos_generales_folds(
     k_folds=10,
 )
 
-# C. Generar dataset.yml para todos los folds de Asistencia
+# C. Generar dataset.yml para todos los folds
 generar_dataset_yaml_folds(
     origen_dir="../../data/dataset_etiquetado_columnas/c_etiquetados",
     destino_base_dir="../../data/dataset_etiquetado_columnas/d_split_cross_valid",
