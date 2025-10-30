@@ -97,8 +97,8 @@ for fold_idx, fold in enumerate(folds, start=1):
                 name=experiment_name,
                 verbose=True,
                 # Data Augmentation
-                flipud=0.5,  # Probabilidad de voltear la imagen verticalmente (flip up-down) durante el aumento de datos
-                fliplr=0.5,  # Probabilidad de voltear la imagen horizontalmente (flip left-right) durante el aumento de datos
+                # flipud=0.5,  # Probabilidad de voltear la imagen verticalmente (flip up-down) durante el aumento de datos
+                # fliplr=0.5,  # Probabilidad de voltear la imagen horizontalmente (flip left-right) durante el aumento de datos
                 # Parámetros para mejorar detección
                 conf=0.001,  # Umbral de confianza muy bajo durante entrenamiento
                 iou=0.7,  # IOU threshold para NMS
