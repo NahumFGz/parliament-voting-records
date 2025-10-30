@@ -30,11 +30,13 @@ MAGENTA = "\033[35m"
 RED = "\033[31m"
 
 # Configuración de rutas
-CONFIG_PATH = "experiments_yolo.yml"
+CONFIG_PATH = "./experiments_yolo.yml"
 EXPERIMENTS_DIR = (
-    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo/experiments"
+    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_zonas/experiments"
 )
-OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo/evaluation"
+OUTPUT_DIR = (
+    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_zonas/evaluation"
+)
 
 # Crear directorio de salida si no existe
 os.makedirs(OUTPUT_DIR, exist_ok=True)
