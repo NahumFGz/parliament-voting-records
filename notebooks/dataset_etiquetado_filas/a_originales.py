@@ -8,7 +8,7 @@ PREFIX = "colyolo_"
 
 # Variables globales
 SEED = 42
-NUM_MUESTRA = 100
+NUM_MUESTRA = 300
 
 # Rutas
 INPUT_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
