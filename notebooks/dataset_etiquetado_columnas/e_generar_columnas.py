@@ -230,8 +230,8 @@ def procesar_imagen(args):
             zona = image_bgr[y_min:y_max, x_min:x_max]
 
             # Guardar recorte con prefijo en la misma carpeta
-            # zona_path = os.path.join(img_dir, f"{prefix}{label}_{i+1}.jpg")
-            zona_path = os.path.join(img_dir, f"{prefix}{label}.jpg")
+            zona_path = os.path.join(img_dir, f"{prefix}{label}_{i+1}.jpg")
+
             cv2.imwrite(zona_path, zona)
 
     return f"✅ Procesada: {img_path.name}"
