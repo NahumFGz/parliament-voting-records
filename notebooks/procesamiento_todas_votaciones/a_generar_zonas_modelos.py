@@ -9,7 +9,7 @@ from ultralytics import YOLO
 # ⚙️ Configuraciones para votación
 input_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/a_originales"
 output_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
-model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo/experiments/yolo11n_img480_bs32_fold_9/weights/best.pt"
+model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_zonas/experiments/yolo11n_img480_bs32_fold_9/weights/best.pt"
 
 # 🔧 Configuración de paralelización
 # Si es 0, procesa secuencialmente. Si > 0, usa ese número de workers
@@ -88,7 +88,9 @@ def procesar_imagen(args):
         return f"[⚠️] No se pudo leer la imagen: {image_path}"
 
     # 📍 Predecir zonas
-    results = model.predict(source=image_bgr, conf=0.25)
+    results = model.predict(
+        source=image_bgr, conf=0.25, max_det=3, agnostic_nms=True, verbose=False
+    )
     for result in results:
         detecciones = result.boxes
         labels = result.names
