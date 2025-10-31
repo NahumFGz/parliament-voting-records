@@ -8,7 +8,7 @@ data/**/*.cache
 notebooks/**/*pth
 validation/**/*.pt
 validation/**/*.cache
-notebooks/ocr/models/**
+others/ocr/models/**
 
 # Env
 .env
