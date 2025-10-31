@@ -9,14 +9,15 @@ from ultralytics import YOLO
 
 # ⚙️ Configuraciones
 base_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
-model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_columnas/experiments/yolo11n_img480_bs32_fold_2/weights/best.pt"
+model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_filas/experiments/yolo11s_img480_bs32_fold_10/weights/best.pt"
 
-# 🏷️ Prefijo para las imágenes generadas
-PREFIX = "colyolo_"
+# 🏷️ Prefijo para buscar imágenes de entrada y etiquetar imágenes de salida
+PREFIX = "colyolo_"  # Busca archivos que empiezan con este prefijo
+OUTPUT_PREFIX = "colcolyolo_"  # Prefijo para las imágenes de salida (columnas en columnas)
 
 # 🎯 Configuraciones de márgenes (% del alto/ancho de la zona)
-MARGEN_ARRIBA = 0.02  # 2% hacia arriba (0.02 = 2%)
-MARGEN_ABAJO = 0.02  # 2% hacia abajo (0.02 = 2%)
+MARGEN_ARRIBA = 0.00  # 2% hacia arriba (0.02 = 2%)
+MARGEN_ABAJO = 0.00  # 2% hacia abajo (0.02 = 2%)
 MARGEN_IZQUIERDA = 0.00  # 2% hacia la izquierda (0.02 = 2%)
 MARGEN_DERECHA = 0.00  # 2% hacia la derecha (0.02 = 2%)
 
@@ -46,54 +47,56 @@ def buscar_todas_imagenes(base_path):
     return imagenes
 
 
-def filtrar_imagenes_con_columna(imagenes):
+def filtrar_imagenes_con_prefix(imagenes, prefix):
     """
-    Filtra imágenes que contienen 'columna' en el nombre.
+    Filtra imágenes que empiezan con el prefijo especificado.
 
     Args:
         imagenes: Lista de Path con imágenes
+        prefix: Prefijo a buscar al inicio del nombre
 
     Returns:
-        Lista de Path con imágenes que contienen 'columna' en el nombre
+        Lista de Path con imágenes que empiezan con el prefijo
     """
-    return [img for img in imagenes if "columna" in img.name.lower()]
+    return [img for img in imagenes if img.name.startswith(prefix)]
 
 
-def identificar_carpetas_sin_columna(todas_imagenes, imagenes_con_columna):
+def identificar_carpetas_sin_prefix(todas_imagenes, imagenes_con_prefix):
     """
-    Identifica carpetas que tienen imágenes pero no tienen imágenes con 'columna'.
+    Identifica carpetas que tienen imágenes pero no tienen imágenes con el prefijo.
 
     Args:
         todas_imagenes: Lista de todas las imágenes
-        imagenes_con_columna: Lista de imágenes con 'columna' en el nombre
+        imagenes_con_prefix: Lista de imágenes con el prefijo en el nombre
 
     Returns:
-        Set de Path con carpetas sin imágenes con 'columna'
+        Set de Path con carpetas sin imágenes con el prefijo
     """
     carpetas_con_imagenes = set(img.parent for img in todas_imagenes)
-    carpetas_con_columna = set(img.parent for img in imagenes_con_columna)
-    return carpetas_con_imagenes - carpetas_con_columna
+    carpetas_con_prefix = set(img.parent for img in imagenes_con_prefix)
+    return carpetas_con_imagenes - carpetas_con_prefix
 
 
-def guardar_reporte_carpetas_sin_columna(carpetas_sin_columna, base_dir):
+def guardar_reporte_carpetas_sin_prefix(carpetas_sin_prefix, base_dir, prefix):
     """
-    Guarda un CSV con las rutas de carpetas sin imágenes con 'columna'.
+    Guarda un CSV con las rutas de carpetas sin imágenes con el prefijo.
 
     Args:
-        carpetas_sin_columna: Set de carpetas sin columna
+        carpetas_sin_prefix: Set de carpetas sin el prefijo
         base_dir: Directorio base donde guardar el CSV
+        prefix: Prefijo buscado
     """
-    if not carpetas_sin_columna:
-        print("✅ Todas las carpetas con imágenes tienen al menos una imagen con 'columna'")
+    if not carpetas_sin_prefix:
+        print(f"✅ Todas las carpetas con imágenes tienen al menos una imagen con '{prefix}'")
         return
 
-    print(f"📋 Se encontraron {len(carpetas_sin_columna)} carpetas sin imágenes con 'columna'")
+    print(f"📋 Se encontraron {len(carpetas_sin_prefix)} carpetas sin imágenes con '{prefix}'")
 
-    csv_path = os.path.join(base_dir, "carpetas_sin_columna.csv")
-    df_sin_columna = pd.DataFrame(
-        {"ruta_carpeta": sorted([str(carpeta) for carpeta in carpetas_sin_columna])}
+    csv_path = os.path.join(base_dir, f"carpetas_sin_{prefix.rstrip('_')}.csv")
+    df_sin_prefix = pd.DataFrame(
+        {"ruta_carpeta": sorted([str(carpeta) for carpeta in carpetas_sin_prefix])}
     )
-    df_sin_columna.to_csv(csv_path, index=False)
+    df_sin_prefix.to_csv(csv_path, index=False)
     print(f"💾 CSV guardado en: {csv_path}")
 
 
@@ -182,15 +185,15 @@ def aplicar_margenes(x_min, y_min, x_max, y_max, img_height, img_width):
 
 def procesar_imagen(args):
     """
-    Procesa una imagen individual: detecta zonas y guarda recortes.
+    Procesa una imagen individual: detecta zonas y guarda recortes en carpeta propia.
 
     Args:
-        args: Tupla con (idx, img_path, model_path, prefix, total_imgs)
+        args: Tupla con (idx, img_path, model_path, output_prefix, total_imgs)
 
     Returns:
         str: Mensaje de estado del procesamiento
     """
-    idx, img_path, model_path, prefix, total_imgs = args
+    idx, img_path, model_path, output_prefix, total_imgs = args
 
     # Cargar modelo YOLO en cada proceso
     model = YOLO(model_path)
@@ -206,16 +209,21 @@ def procesar_imagen(args):
     # Obtener dimensiones de la imagen
     img_height, img_width = image_bgr.shape[:2]
 
+    # Crear carpeta de salida con el nombre del archivo (sin extensión)
+    img_dir = img_path.parent
+    nombre_sin_extension = img_path.stem  # nombre sin .jpg
+    carpeta_salida = img_dir / nombre_sin_extension
+
+    # Crear la carpeta si no existe
+    carpeta_salida.mkdir(exist_ok=True)
+
     # 📍 Predecir zonas
     results = model.predict(
-        source=image_bgr, conf=0.25, max_det=3, agnostic_nms=True, verbose=False
+        source=image_bgr, conf=0.001, iou=0.7, max_det=3, agnostic_nms=True, verbose=False
     )
     for result in results:
         detecciones = result.boxes
         labels = result.names
-
-        # Obtener directorio donde está la imagen original
-        img_dir = str(img_path.parent)
 
         for i, box in enumerate(detecciones):
             x_min, y_min, x_max, y_max = map(int, box.xyxy[0])
@@ -229,9 +237,10 @@ def procesar_imagen(args):
             # Recortar zona
             zona = image_bgr[y_min:y_max, x_min:x_max]
 
-            # Guardar recorte con prefijo en la misma carpeta
-            zona_path = os.path.join(img_dir, f"{prefix}{label}_{i+1}.jpg")
-            cv2.imwrite(zona_path, zona)
+            # Guardar recorte con prefijo en la carpeta creada
+            zona_path = carpeta_salida / f"{output_prefix}{label}_{i+1}.jpg"
+
+            cv2.imwrite(str(zona_path), zona)
 
     return f"✅ Procesada: {img_path.name}"
 
@@ -245,18 +254,18 @@ if __name__ == "__main__":
     todas_imagenes = buscar_todas_imagenes(base_path)
     print(f"   Encontradas {len(todas_imagenes)} imágenes en total")
 
-    # 📋 Paso 2: Filtrar imágenes con "columna"
-    imagenes_con_columna = filtrar_imagenes_con_columna(todas_imagenes)
-    total_imgs = len(imagenes_con_columna)
-    print(f"📦 Total de imágenes con 'columna' en el nombre: {total_imgs}")
+    # 📋 Paso 2: Filtrar imágenes con el PREFIX
+    imagenes_con_prefix = filtrar_imagenes_con_prefix(todas_imagenes, PREFIX)
+    total_imgs = len(imagenes_con_prefix)
+    print(f"📦 Total de imágenes con prefijo '{PREFIX}': {total_imgs}")
 
-    # 📊 Paso 3: Identificar y reportar carpetas sin columna
-    carpetas_sin_columna = identificar_carpetas_sin_columna(todas_imagenes, imagenes_con_columna)
-    guardar_reporte_carpetas_sin_columna(carpetas_sin_columna, base_dir)
+    # 📊 Paso 3: Identificar y reportar carpetas sin prefix
+    carpetas_sin_prefix = identificar_carpetas_sin_prefix(todas_imagenes, imagenes_con_prefix)
+    guardar_reporte_carpetas_sin_prefix(carpetas_sin_prefix, base_dir, PREFIX)
 
     # ⚠️ Validar que hay imágenes para procesar
     if total_imgs == 0:
-        print("⚠️ No se encontraron imágenes con 'columna' en el nombre")
+        print(f"⚠️ No se encontraron imágenes con prefijo '{PREFIX}'")
         exit()
 
     # 🔧 Paso 4: Configurar workers
@@ -264,8 +273,8 @@ if __name__ == "__main__":
 
     # 🔁 Paso 5: Preparar argumentos para procesamiento
     args_list = [
-        (idx, img_path, model_path, PREFIX, total_imgs)
-        for idx, img_path in enumerate(imagenes_con_columna, start=1)
+        (idx, img_path, model_path, OUTPUT_PREFIX, total_imgs)
+        for idx, img_path in enumerate(imagenes_con_prefix, start=1)
     ]
 
     # 🚀 Paso 6: Ejecutar procesamiento
