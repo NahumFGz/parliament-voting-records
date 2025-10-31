@@ -14,7 +14,7 @@ PREFIX_CARPETA_FILAS = "fil_"
 CONTENT_NAME_GRUPO_PARLAMENTARIO = "grupo_parlamentario"
 CONTENT_NAME_CONGRESISTAS = "congresista"
 CONTENT_NAME_VOTOS = "voto"
-NUM_WORKERS = 4
+NUM_WORKERS = 6
 
 
 def detectar_y_anotar_filas(
