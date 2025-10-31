@@ -17,3 +17,4 @@ scikit-learn
 beautifulsoup4
 selenium
 pdf2image
+openai
