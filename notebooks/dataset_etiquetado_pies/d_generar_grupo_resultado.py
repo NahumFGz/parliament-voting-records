@@ -11,7 +11,7 @@ from ultralytics import YOLO
 base_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
 model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_pies/experiments/yolo11n_img320_bs32_fold_3/weights/best.pt"
 
-# 🏷️ Prefijo para las imágenes generadas
+# 🏷️ Prefijo para las imágenes generadas en el etiquetado
 PREFIX_ORIGINAL = "pie_"
 PREFIX_CROPED = "pieyolo_"
 
