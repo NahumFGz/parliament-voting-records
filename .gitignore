@@ -1,6 +1,6 @@
 # Imágenes y PDFs
 data/
-data/** 
+extract_ocr/
 
 # Modelos y cache
 notebooks/**/*pth
