@@ -1,8 +1,5 @@
 # Imágenes y PDFs
-data/**/*.jpg
-data/**/*.png
-data/**/*.pdf
-data/**/*.cache
+data/
 
 # Modelos y cache
 notebooks/**/*pth
