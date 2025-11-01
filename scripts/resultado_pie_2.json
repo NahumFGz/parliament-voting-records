@@ -1,0 +1,27 @@
+{
+  "output": {
+    "votos_orales": [
+      {
+        "nombre": "VALLE RAMÍREZ",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "JULCA JARA",
+        "voto": "A favor"
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 1163,
+      "completion": 430,
+      "total": 1593
+    },
+    "cost_usd": 0.00115,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}

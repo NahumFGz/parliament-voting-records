@@ -1,0 +1,51 @@
+{
+  "output": {
+    "votos_orales": [
+      {
+        "nombre": "PEÑARANDA",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "CARI",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "VÁSQUEZ RODRÍGUEZ",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "SILVA DÍAZ",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "HUAMÁN",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "GARCÍA BELAÚNDE",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "YAMASHIRO",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "FLORIA",
+        "voto": "A favor"
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 1316,
+      "completion": 1281,
+      "total": 2597
+    },
+    "cost_usd": 0.00289,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}
