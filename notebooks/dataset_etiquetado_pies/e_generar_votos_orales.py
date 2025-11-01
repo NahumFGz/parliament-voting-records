@@ -214,6 +214,19 @@ def procesar_imagen(args):
                 regiones[label] = []
             regiones[label].append((x_min, y_min, x_max, y_max))
 
+    # Calcular la altura mínima entre las 2 regiones para el recorte final
+    altura_minima = img_height  # Valor por defecto
+
+    if "resultado" in regiones:
+        for x_min, y_min, x_max, y_max in regiones["resultado"]:
+            alto_region = y_max - y_min
+            altura_minima = min(altura_minima, alto_region)
+
+    if "grupo_parlamentario" in regiones:
+        for x_min, y_min, x_max, y_max in regiones["grupo_parlamentario"]:
+            alto_region = y_max - y_min
+            altura_minima = min(altura_minima, alto_region)
+
     # Crear máscara para marcar las regiones ocupadas
     mascara_ocupada = np.zeros((img_height, img_width), dtype=np.uint8)
 
@@ -255,9 +268,13 @@ def procesar_imagen(args):
     # Extraer la región de voto_oral usando la máscara
     voto_oral = cv2.bitwise_and(image_bgr, image_bgr, mask=mascara_voto_oral)
 
-    # Guardar la región de voto_oral
+    # Recortar la imagen desde la altura mínima hacia abajo
+    # Esto elimina la parte superior que ya está cubierta por las regiones extendidas
+    voto_oral_recortado = voto_oral[altura_minima:img_height, 0:img_width]
+
+    # Guardar la región de voto_oral recortada
     voto_oral_path = os.path.join(img_dir, f"{prefix_croped}voto_oral.jpg")
-    cv2.imwrite(voto_oral_path, voto_oral)
+    cv2.imwrite(voto_oral_path, voto_oral_recortado)
 
     return f"✅ Procesada: {img_path.name}"
 
