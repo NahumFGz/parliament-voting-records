@@ -18,3 +18,4 @@ beautifulsoup4
 selenium
 pdf2image
 openai
+seaborn

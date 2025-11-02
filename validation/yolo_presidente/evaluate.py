@@ -32,10 +32,10 @@ RED = "\033[31m"
 # Configuración de rutas
 CONFIG_PATH = "experiments_yolo.yml"
 EXPERIMENTS_DIR = (
-    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_filas/experiments"
+    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_presidente/experiments"
 )
 OUTPUT_DIR = (
-    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_filas/evaluation"
+    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_presidente/evaluation"
 )
 
 # Crear directorio de salida si no existe
