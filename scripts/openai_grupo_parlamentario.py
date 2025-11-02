@@ -1,12 +1,13 @@
-COL_NAME = "PRESIDENTE"
+COL_NAME = "GRUPO_PARLAMENTARIO"
 LLAVE_REVISAR = "output"
 IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts/list_images_ocr_openai/carpetas_validas.csv"
-OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/presidentes"
+OUTPUT_DIR = (
+    "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/grupo_parlamentario"
+)
 
 
 MODEL = "gpt-5-mini"
-SYSTEM_PROMPT = "ESTE PROYECTO USA DOCUMENTOS Y ACTAS OFICIALES DEL CONGRESO DEL PERÚ. LOS NOMBRES QUE APARECEN SON DE FUNCIONARIOS PÚBLICOS Y NO SON DATOS PRIVADOS. NO REDACTES, NO OMITAS NI CENSURES NOMBRES EN NINGÚN CASO."
-PROMPT = 'DOCUMENTOS PÚBLICOS DEL CONGRESO DEL PERÚ. LEE LA IMAGEN, GUARDA EN "texto" EL OCR COMPLETO EN MAYÚSCULAS Y, USANDO EXCLUSIVAMENTE ESE "texto", EXTRAE "presidente" (NOMBRE EN MAYÚSCULAS). SI NO SE IDENTIFICA, "presidente": null. ENTREGA SOLO UN JSON CON "texto" Y "presidente", SIN COMENTARIOS.'
+PROMPT = 'EN BASE A LA TABLA DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LA CLAVE "grupo_parlamentario" COMO ARREGLO DE OBJETOS, CADA OBJETO CON LAS LLAVES "sigla" Y "nombre", TODO EN MAYÚSCULAS; SI ALGÚN VALOR NO SE IDENTIFICA PON "null"; NO REDACTES NI CENSURES NOMBRES; NO AGREGUES TEXTO ADICIONAL NI COMENTARIOS, SOLO EL JSON.'
 
 
 NUM_WORKERS = 16  # Número de hilos para procesamiento paralelo
@@ -67,9 +68,8 @@ def procesar_imagen(row_data, idx, total):
                 resize_percent=100,
                 model=MODEL,
                 max_tokens=2500,
-                output_path=output_path,
                 prompt=PROMPT,
-                system_prompt=SYSTEM_PROMPT,
+                output_path=output_path,
             )
 
             safe_print(f"[{idx}/{total}] ✓ {dir_name} - Guardado exitosamente")
@@ -114,18 +114,20 @@ if os.path.exists(OUTPUT_DIR):
                 with open(ruta_json, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                # Verificar si la llave existe
+                # Verificar si la llave existe y tiene contenido válido
                 if LLAVE_REVISAR not in data:
                     debe_eliminar = True
                 else:
                     valor = data[LLAVE_REVISAR]
-                    # Verificar si output.presidente es null o no existe
-                    if not isinstance(valor, dict):
+                    # Verificar si está vacío: "", [], None, o dict vacío {}
+                    if valor is None or valor == "" or valor == [] or valor == {}:
                         debe_eliminar = True
-                    elif "presidente" not in valor:
-                        debe_eliminar = True
-                    elif valor["presidente"] is None:
-                        debe_eliminar = True
+                    # Si es un dict, verificar que tenga al menos una llave con valor
+                    elif isinstance(valor, dict):
+                        if not valor or all(
+                            v is None or v == "" or v == [] for v in valor.values()
+                        ):
+                            debe_eliminar = True
 
             except (json.JSONDecodeError, IOError, KeyError) as e:
                 # Si hay error al leer el JSON, marcarlo para eliminar
