@@ -1,11 +1,11 @@
-COL_NAME = "ENCABEZADO"
+COL_NAME = "VOTO_ORAL"
 LLAVE_REVISAR = "output"
 IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts/list_images_ocr_openai/carpetas_validas.csv"
-OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/encabezados"
+OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/voto_oral"
 
 
 MODEL = "gpt-5-mini"
-PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
+PROMPT = 'EN BASE AL TEXTO DE LA IMAGEN, EXTRAER LA LISTA DE VOTOS ORALES Y DEVOLVER ÚNICAMENTE UN JSON CON LA CLAVE "votos_orales" COMO ARREGLO DE OBJETOS {"nombre": NOMBRE_EN_MAYÚSCULAS, "voto": "A FAVOR"|"EN CONTRA"|"ABSTENCIÓN"}; SI FALTA ALGÚN DATO USAR null; SI SE MENCIONA QUE EL PRESIDENTE VOTA PERO NO SE INDICA SU NOMBRE, USAR "PRESIDENTE DE SESIÓN"; SI EL NOMBRE DEL PRESIDENTE APARECE EXPLÍCITO, USAR ESE NOMBRE NORMALMENTE; NO AGREGUES TEXTO ADICIONAL NI COMENTARIOS, SOLO EL JSON.'
 
 
 NUM_WORKERS = 10  # Número de hilos para procesamiento paralelo
