@@ -1,16 +1,18 @@
 COL_NAME = "ENCABEZADO"
+LLAVE_REVISAR = "output"
 IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts/list_images_ocr_openai/carpetas_validas.csv"
 OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/encabezados"
 
 
 MODEL = "gpt-5-mini"
-PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'presidente', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; EL 'PRESIDENTE' SIEMPRE SE ENCUENTRA EN LA PARTE SUPERIOR DERECHA AUNQUE PUEDA ESTAR PARCIALMENTE TAPADO; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
+PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
 
 
 NUM_WORKERS = 6  # Número de hilos para procesamiento paralelo
 MAX_RETRIES = 3  # Número máximo de reintentos por imagen
 RETRY_DELAY_BASE = 5  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
 
+import json
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -94,25 +96,66 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Leer el CSV
 df = pd.read_csv(IMAGE_CSV_PATH)
 
-# Obtener lista de archivos JSON ya procesados
+# Obtener lista de archivos JSON ya procesados y validar contenido
 archivos_procesados = set()
+archivos_eliminados = []
+
 if os.path.exists(OUTPUT_DIR):
     for archivo in os.listdir(OUTPUT_DIR):
         if archivo.endswith(".json"):
-            # Extraer el nombre sin la extensión .json
+            ruta_json = os.path.join(OUTPUT_DIR, archivo)
             nombre_sin_extension = archivo[:-5]
-            archivos_procesados.add(nombre_sin_extension)
+
+            # Validar que el JSON tenga contenido válido en LLAVE_REVISAR
+            debe_eliminar = False
+            try:
+                with open(ruta_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                # Verificar si la llave existe y tiene contenido válido
+                if LLAVE_REVISAR not in data:
+                    debe_eliminar = True
+                else:
+                    valor = data[LLAVE_REVISAR]
+                    # Verificar si está vacío: "", [], None, o dict vacío {}
+                    if valor is None or valor == "" or valor == [] or valor == {}:
+                        debe_eliminar = True
+                    # Si es un dict, verificar que tenga al menos una llave con valor
+                    elif isinstance(valor, dict):
+                        if not valor or all(
+                            v is None or v == "" or v == [] for v in valor.values()
+                        ):
+                            debe_eliminar = True
+
+            except (json.JSONDecodeError, IOError, KeyError) as e:
+                # Si hay error al leer el JSON, marcarlo para eliminar
+                debe_eliminar = True
+
+            if debe_eliminar:
+                try:
+                    os.remove(ruta_json)
+                    archivos_eliminados.append(nombre_sin_extension)
+                except Exception as e:
+                    print(f"⚠️  Error al eliminar {archivo}: {e}")
+            else:
+                archivos_procesados.add(nombre_sin_extension)
 
 print("\n" + "=" * 60)
 print("📊 ESTADO DEL PROCESAMIENTO")
 print("=" * 60)
 print(f"📁 Total de imágenes en CSV: {len(df)}")
-print(f"✅ Ya procesadas (se omitirán): {len(archivos_procesados)}")
+if len(archivos_eliminados) > 0:
+    print(
+        f"🗑️  Archivos eliminados por contenido inválido (se reprocesarán): {len(archivos_eliminados)}"
+    )
+print(f"✅ Ya procesadas correctamente (se omitirán): {len(archivos_procesados)}")
 
 # Filtrar el DataFrame para excluir los ya procesados
 df_filtrado = df[~df["DIR_NAME"].isin(archivos_procesados)]
 
-print(f"🔄 Pendientes por procesar: {len(df_filtrado)}")
+print(
+    f"🔄 Pendientes por procesar: {len(df_filtrado)} (incluye {len(archivos_eliminados)} reprocesar)"
+)
 print(f"⚙️  Trabajadores paralelos: {NUM_WORKERS}")
 print(f"🔁 Reintentos máximos por imagen: {MAX_RETRIES}")
 print(f"⏱️  Delay base entre reintentos: {RETRY_DELAY_BASE}s")
