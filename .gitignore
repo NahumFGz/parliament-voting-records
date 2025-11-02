@@ -9,10 +9,7 @@ validation/**/*.cache
 others/ocr/models/**
 
 # Experimentos de validaciones
-validation/yolo_columnas/experiments/
-validation/yolo_filas/experiments/
-validation/yolo_pies/experiments/
-validation/yolo_zonas/experiments/
+validation/**/experiments/
 
 # Env
 .env
