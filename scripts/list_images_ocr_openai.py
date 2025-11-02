@@ -8,7 +8,7 @@ output_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts/lis
 os.makedirs(output_dir, exist_ok=True)
 
 # Tipos de imágenes a buscar
-tipos_imagenes = ["encabezado", "grupo_parlamentario", "resultado", "voto_oral"]
+tipos_imagenes = ["encabezado", "presidente", "grupo_parlamentario", "resultado", "voto_oral"]
 
 # Extensiones de imagen válidas
 extensiones_imagen = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
@@ -24,6 +24,7 @@ for subdir in sorted(Path(base_dir).iterdir()):
         # Buscar imágenes por tipo
         imagenes_encontradas = {
             "encabezado": [],
+            "presidente": [],
             "grupo_parlamentario": [],
             "resultado": [],
             "voto_oral": [],
@@ -47,6 +48,7 @@ for subdir in sorted(Path(base_dir).iterdir()):
                     "DIR_PATH": str(subdir),
                     "DIR_NAME": subdir.name,
                     "ENCABEZADO": imagenes_encontradas["encabezado"][0],
+                    "PRESIDENTE": imagenes_encontradas["presidente"][0],
                     "GRUPO_PARLAMENTARIO": imagenes_encontradas["grupo_parlamentario"][0],
                     "RESULTADO": imagenes_encontradas["resultado"][0],
                     "VOTO_ORAL": imagenes_encontradas["voto_oral"][0],
@@ -62,6 +64,12 @@ for subdir in sorted(Path(base_dir).iterdir()):
                     "ENCABEZADO_FILES": (
                         ", ".join(imagenes_encontradas["encabezado"])
                         if imagenes_encontradas["encabezado"]
+                        else "NINGUNO"
+                    ),
+                    "PRESIDENTE_COUNT": cantidades["presidente"],
+                    "PRESIDENTE_FILES": (
+                        ", ".join(imagenes_encontradas["presidente"])
+                        if imagenes_encontradas["presidente"]
                         else "NINGUNO"
                     ),
                     "GRUPO_PARLAMENTARIO_COUNT": cantidades["grupo_parlamentario"],
@@ -94,6 +102,7 @@ with open(csv_validas, "w", newline="", encoding="utf-8") as f:
             "DIR_PATH",
             "DIR_NAME",
             "ENCABEZADO",
+            "PRESIDENTE",
             "GRUPO_PARLAMENTARIO",
             "RESULTADO",
             "VOTO_ORAL",
@@ -111,6 +120,8 @@ with open(csv_anomalas, "w", newline="", encoding="utf-8") as f:
             "DIR_NAME",
             "ENCABEZADO_COUNT",
             "ENCABEZADO_FILES",
+            "PRESIDENTE_COUNT",
+            "PRESIDENTE_FILES",
             "GRUPO_PARLAMENTARIO_COUNT",
             "GRUPO_PARLAMENTARIO_FILES",
             "RESULTADO_COUNT",

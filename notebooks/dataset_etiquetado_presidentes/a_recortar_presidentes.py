@@ -15,7 +15,7 @@ NUM_WORKERS = 8  # Puedes cambiar este valor según necesites
 
 def procesar_imagen(args):
     """
-    Procesa una imagen individual: divide en 4 cuadrantes y guarda el superior derecho.
+    Procesa una imagen individual: divide en 8 partes (2x4) y guarda las 3 superiores de la derecha.
 
     Args:
         args: Tupla con (idx, img_path, total_imgs)
@@ -36,18 +36,31 @@ def procesar_imagen(args):
     # Obtener dimensiones de la imagen
     img_height, img_width = image_bgr.shape[:2]
 
-    # Calcular el centro de la imagen
+    # Dividir en 2 columnas (izquierda y derecha)
     centro_x = img_width // 2
-    centro_y = img_height // 2
 
-    # Recortar el cuadrante superior derecho
-    # Desde (centro_x, 0) hasta (img_width, centro_y)
-    cuadrante_superior_derecho = image_bgr[0:centro_y, centro_x:img_width]
+    # Dividir en 4 filas
+    altura_seccion = img_height // 4
 
-    # Guardar el cuadrante como "presidente_1.jpg" en la misma carpeta
+    # Carpeta donde guardar
     carpeta_imagen = os.path.dirname(img_path)
-    zona_path = os.path.join(carpeta_imagen, "presidente_1.jpg")
-    cv2.imwrite(zona_path, cuadrante_superior_derecho)
+
+    # Recortar las 3 secciones superiores de la columna derecha
+    secciones = []
+    for i in range(3):
+        y_inicio = i * altura_seccion
+        y_fin = (i + 1) * altura_seccion
+
+        # Recortar sección derecha (desde centro_x hasta el final)
+        seccion = image_bgr[y_inicio:y_fin, centro_x:img_width]
+        secciones.append(seccion)
+
+    # Concatenar verticalmente las 3 secciones en una sola imagen
+    imagen_concatenada = cv2.vconcat(secciones)
+
+    # Guardar como "presidente_1.jpg"
+    zona_path = os.path.join(carpeta_imagen, "croped_presidente_1.jpg")
+    cv2.imwrite(zona_path, imagen_concatenada)
 
     return f"✅ Procesada: {os.path.basename(img_path)}"
 
