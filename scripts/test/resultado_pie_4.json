@@ -1,0 +1,18 @@
+{
+  "output": {
+    "votos_orales": []
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 702,
+      "completion": 209,
+      "total": 911
+    },
+    "cost_usd": 0.00059,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}

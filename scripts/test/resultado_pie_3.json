@@ -1,0 +1,39 @@
+{
+  "output": {
+    "votos_orales": [
+      {
+        "nombre": "VASQUEZ RODRIGUEZ",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "SILVA DIAZ",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "HUAMAN",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "GARCIA BELAUNDE",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "YAMASHIRO",
+        "voto": "A favor"
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 1316,
+      "completion": 1305,
+      "total": 2621
+    },
+    "cost_usd": 0.00294,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}

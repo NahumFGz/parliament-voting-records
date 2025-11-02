@@ -1,0 +1,38 @@
+# Imágenes y PDFs
+data/
+extract_ocr/
+
+# Modelos y cache
+notebooks/**/*pth
+validation/**/*.pt
+validation/**/*.cache
+others/ocr/models/**
+
+# Experimentos de validaciones
+validation/yolo_columnas/experiments/
+validation/yolo_filas/experiments/
+validation/yolo_pies/experiments/
+validation/yolo_zonas/experiments/
+
+# Env
+.env
+
+# Python
+venv_*/
+**/venv_*/
+__pycache__/
+**/__pycache__/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

@@ -1,0 +1,67 @@
+{
+  "output": {
+    "votos_orales": [
+      {
+        "nombre": "SOLÓRZANO FLORES",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "LLATAS ALTAMIRANO",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "CARRILLO CAVERO",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "HUAYAMA NEIRA",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "PÉREZ DEL SOLAR",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "CUCULIZA",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "LEWIS DEL ALCÁZAR",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "LEÓN RIVERA",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "GUTIÉRREZ CÓNDOR",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "AGUINAGA RECUENCO",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "GRÁNDEZ SALDAÑA",
+        "voto": "A favor"
+      },
+      {
+        "nombre": "PÉREZ TELLO DE RODRIGUEZ",
+        "voto": "A favor"
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 932,
+      "completion": 1495,
+      "total": 2427
+    },
+    "cost_usd": 0.00322,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}

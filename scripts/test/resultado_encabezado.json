@@ -1,0 +1,22 @@
+{
+  "output": {
+    "tipo": "Votación",
+    "fecha": "10/05/2024",
+    "hora": "10:29 am",
+    "presidente": "SOTO REYES, ALEJANDRO",
+    "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 7716, QUE PROPONE MODIFICAR LOS ARTÍCULOS 9 Y 72, LITERAL F), E INCORPORAR LA DÉCIMO TERCERA DISPOSICIÓN COMPLEMENTARIA TRANSITORIA EN LA LEY 30916, LEY ORGÁNICA DE LA JUNTA NACIONAL DE JUSTICIA, PARA MEJORAR SU FUNCIONAMIENTO Y SOSTENIBILIDAD"
+  },
+  "meta": {
+    "model": "gpt-5-mini",
+    "tokens": {
+      "prompt": 1129,
+      "completion": 930,
+      "total": 2059
+    },
+    "cost_usd": 0.00214,
+    "pricing": {
+      "input_per_1k": 0.00025,
+      "output_per_1k": 0.002
+    }
+  }
+}
