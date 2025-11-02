@@ -8,7 +8,7 @@ MODEL = "gpt-5-mini"
 PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
 
 
-NUM_WORKERS = 10  # Número de hilos para procesamiento paralelo
+NUM_WORKERS = 16  # Número de hilos para procesamiento paralelo
 MAX_RETRIES = 3  # Número máximo de reintentos por imagen
 RETRY_DELAY_BASE = 5  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
 
