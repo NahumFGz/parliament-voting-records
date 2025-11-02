@@ -89,7 +89,7 @@ def procesar_imagen(args):
 
     # 📍 Predecir zonas
     results = model.predict(
-        source=image_bgr, conf=0.25, max_det=3, agnostic_nms=True, verbose=False
+        source=image_bgr, conf=0.01, max_det=3, agnostic_nms=True, verbose=False
     )
     for result in results:
         detecciones = result.boxes

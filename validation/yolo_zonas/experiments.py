@@ -97,8 +97,8 @@ for fold_idx, fold in enumerate(folds, start=1):
                 name=experiment_name,
                 verbose=True,
                 # Data Augmentation
-                flipud=0.5,
-                fliplr=0.5,
+                flipud=0,  # 0 = desactivado: nunca voltea verticalmente (flip up-down) durante el data augmentation
+                fliplr=0,  # 0 = desactivado: nunca voltea horizontalmente (flip left-right) durante el data augmentation
                 # Parámetros para mejorar detección
                 conf=0.001,  # Umbral de confianza muy bajo durante entrenamiento
                 iou=0.7,  # IOU threshold para NMS
