@@ -5,7 +5,7 @@ result = process_image_ocr(
     resize_percent=90,
     model="gpt-5-mini",
     max_tokens=2500,
-    prompt="En base a la imagen extrae un json con el tipo (Asistencia o Votación), fecha, hora, presidente y asunto. Solo quiero el json sin comentarios adicionales. Si no encuentras alguno de esos campos pon None",
+    prompt="En base a la imagen extrae un json con el tipo (Asistencia o Votación), fecha, hora, presidente y asunto. Solo quiero el json sin comentarios adicionales. Si no encuentras alguno de esos campos pon null",
     output_path="resultado_encabezado.json",
 )
 

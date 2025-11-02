@@ -47,17 +47,54 @@ def parse_json_response(content):
         # 4. Limpiar espacios en blanco adicionales
         content = content.strip()
 
-        # 5. Intentar parsear como JSON
+        # 5. Reemplazar valores Python por valores JSON válidos
+        # Importante: usar word boundaries para evitar reemplazos incorrectos
+        content = re.sub(r"\bNone\b", "null", content)
+        content = re.sub(r"\bTrue\b", "true", content)
+        content = re.sub(r"\bFalse\b", "false", content)
+
+        # 6. Intentar decodificar caracteres escapados si viene como string literal
+        # Por ejemplo: "{\n  \"key\": \"value\"\n}" -> real JSON
+        try:
+            # Intentar decodificar con codecs si detectamos escapes
+            if "\\n" in content or "\\t" in content or '\\"' in content:
+                # Usar decode de unicode-escape para strings con escapes
+                content = content.encode().decode("unicode-escape")
+        except:
+            pass  # Si falla, continuar con el contenido sin decodificar
+
+        # 7. Validar que el JSON esté completo (verificar corchetes/llaves)
+        # Contar apertura y cierre de llaves y corchetes
+        open_braces = content.count("{")
+        close_braces = content.count("}")
+        open_brackets = content.count("[")
+        close_brackets = content.count("]")
+
+        if open_braces != close_braces or open_brackets != close_brackets:
+            print(
+                f"⚠️ Advertencia: JSON posiblemente incompleto (llaves: {open_braces}/{close_braces}, corchetes: {open_brackets}/{close_brackets})"
+            )
+
+        # 8. Intentar parsear como JSON
         parsed = json.loads(content)
         return parsed
 
     except (json.JSONDecodeError, Exception) as e:
-        # Si falla, intentar con el contenido original sin limpiar
+        print(f"⚠️ Error parseando JSON: {str(e)[:100]}")
+        # Si falla, intentar estrategias adicionales
         try:
+            # Estrategia 1: Intentar con el contenido original sin limpiar
             return json.loads(original_content)
         except:
-            # Si todo falla, retornar el contenido original
-            return original_content
+            try:
+                # Estrategia 2: Aplicar solo reemplazo de None/True/False al original
+                cleaned = re.sub(r"\bNone\b", "null", original_content)
+                cleaned = re.sub(r"\bTrue\b", "true", cleaned)
+                cleaned = re.sub(r"\bFalse\b", "false", cleaned)
+                return json.loads(cleaned)
+            except:
+                # Si todo falla, retornar el contenido original
+                return original_content
 
 
 # 🔧 Redimensionar en memoria

@@ -4,7 +4,7 @@ OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr
 
 
 MODEL = "gpt-5-mini"
-PROMPT = "En base a la imagen extrae un json con el tipo (Asistencia o Votación), fecha, hora, presidente y asunto. Solo quiero el json sin comentarios adicionales. Si no encuentras alguno de esos campos pon None"
+PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'presidente', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; EL 'PRESIDENTE' SIEMPRE SE ENCUENTRA EN LA PARTE SUPERIOR DERECHA AUNQUE PUEDA ESTAR PARCIALMENTE TAPADO; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
 
 
 NUM_WORKERS = 6  # Número de hilos para procesamiento paralelo
@@ -61,7 +61,7 @@ def procesar_imagen(row_data, idx, total):
 
             result = process_image_ocr(
                 image_path=image_path,
-                resize_percent=90,
+                resize_percent=100,
                 model=MODEL,
                 max_tokens=2500,
                 prompt=PROMPT,
