@@ -1,7 +1,13 @@
+COL_NAME = "ENCABEZADO"
 IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts/list_images_ocr_openai/carpetas_validas.csv"
 OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/encabezados"
-COL_NAME = "ENCABEZADO"
-NUM_WORKERS = 10  # Número de trabajadores paralelos
+
+
+MODEL = "gpt-5-mini"
+PROMPT = "En base a la imagen extrae un json con el tipo (Asistencia o Votación), fecha, hora, presidente y asunto. Solo quiero el json sin comentarios adicionales. Si no encuentras alguno de esos campos pon None"
+
+
+NUM_WORKERS = 6  # Número de hilos para procesamiento paralelo
 MAX_RETRIES = 3  # Número máximo de reintentos por imagen
 RETRY_DELAY_BASE = 5  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
 
@@ -56,9 +62,9 @@ def procesar_imagen(row_data, idx, total):
             result = process_image_ocr(
                 image_path=image_path,
                 resize_percent=90,
-                model="gpt-5-mini",
+                model=MODEL,
                 max_tokens=2500,
-                prompt="En base a la imagen extrae un json con el tipo (Asistencia o Votación), fecha, hora, presidente y asunto. Solo quiero el json sin comentarios adicionales. Si no encuentras alguno de esos campos pon None",
+                prompt=PROMPT,
                 output_path=output_path,
             )
 
@@ -97,15 +103,30 @@ if os.path.exists(OUTPUT_DIR):
             nombre_sin_extension = archivo[:-5]
             archivos_procesados.add(nombre_sin_extension)
 
-print(f"Se encontraron {len(archivos_procesados)} archivos ya procesados")
-print(f"Total de filas en CSV: {len(df)}")
+print("\n" + "=" * 60)
+print("📊 ESTADO DEL PROCESAMIENTO")
+print("=" * 60)
+print(f"📁 Total de imágenes en CSV: {len(df)}")
+print(f"✅ Ya procesadas (se omitirán): {len(archivos_procesados)}")
 
 # Filtrar el DataFrame para excluir los ya procesados
 df_filtrado = df[~df["DIR_NAME"].isin(archivos_procesados)]
 
-print(f"Filas por procesar: {len(df_filtrado)}")
-print(f"Trabajadores paralelos: {NUM_WORKERS}")
-print("-" * 60)
+print(f"🔄 Pendientes por procesar: {len(df_filtrado)}")
+print(f"⚙️  Trabajadores paralelos: {NUM_WORKERS}")
+print(f"🔁 Reintentos máximos por imagen: {MAX_RETRIES}")
+print(f"⏱️  Delay base entre reintentos: {RETRY_DELAY_BASE}s")
+
+if len(archivos_procesados) > 0:
+    porcentaje_completado = (len(archivos_procesados) / len(df)) * 100
+    print(f"📈 Progreso total: {porcentaje_completado:.1f}% completado")
+
+print("=" * 60)
+
+# Verificar si hay algo que procesar
+if len(df_filtrado) == 0:
+    print("\n✨ ¡Todo está procesado! No hay imágenes pendientes.\n")
+    exit(0)
 
 # Preparar datos para procesamiento paralelo
 tareas = []
