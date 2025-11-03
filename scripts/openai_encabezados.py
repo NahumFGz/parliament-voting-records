@@ -4,7 +4,7 @@ IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts
 OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/encabezados"
 
 
-MODEL = "gpt-5-mini"
+MODEL = "gpt-4o-mini"
 PROMPT = "EN BASE AL TEXTO DE LA IMAGEN DEVUELVE ÚNICAMENTE UN JSON CON LAS LLAVES: 'tipo' (ASISTENCIA O VOTACIÓN), 'fecha', 'hora', 'asunto'; SI ALGÚN VALOR NO SE IDENTIFICA PON 'null'; TODO EL CONTENIDO DEBE IR EN MAYÚSCULAS; NO AGREGUES COMENTARIOS NI TEXTO ADICIONAL."
 
 

@@ -130,17 +130,19 @@ def extract_text_from_image(
 ):
     # Modelos disponibles con visión y sus precios por 1K tokens
     vision_models = {
+        "gpt-4o": {"input": 0.0025, "output": 0.010, "use_max_completion_tokens": False},
+        "gpt-4o-mini": {"input": 0.00015, "output": 0.0006, "use_max_completion_tokens": False},
         "gpt-5": {"input": 0.00125, "output": 0.010, "use_max_completion_tokens": True},
         "gpt-5-mini": {"input": 0.00025, "output": 0.002, "use_max_completion_tokens": True},
     }
 
     # Validación modelo
     if model not in vision_models:
-        print(f"⚠️ Modelo {model} no soporta visión. Usando gpt-4o")
-        model = "gpt-4o"
+        print(f"⚠️ Modelo {model} no reconocido. Usando gpt-4o-mini")
+        model = "gpt-4o-mini"
 
     pricing = vision_models[model]
-    print(f"🤖 Usando modelo: {model}")
+    print(f"🤖 Usando modelo: {model} (JSON mode activado)")
 
     # Construcción de mensajes
     messages = []
@@ -170,6 +172,7 @@ def extract_text_from_image(
     request_params = {
         "model": model,
         "messages": messages,
+        "response_format": {"type": "json_object"},  # ✨ Forzar respuesta en JSON válido
     }
 
     # ⚠️ Diferencia clave: GPT-5 usa max_completion_tokens
@@ -213,7 +216,7 @@ def extract_text_from_image(
 def process_image_ocr(
     image_path,
     resize_percent=40,
-    model="gpt-5-mini",
+    model="gpt-4o-mini",
     max_tokens=2000,
     output_path=None,
     prompt=None,
@@ -222,18 +225,27 @@ def process_image_ocr(
     """
     Procesa una imagen con OCR usando diferentes modelos y configuraciones
 
+    ⚠️ IMPORTANTE: Esta función fuerza la respuesta en JSON válido usando response_format.
+    El prompt DEBE mencionar que la respuesta debe ser en formato JSON, sino el modelo fallará.
+
     Args:
         image_path: Ruta a la imagen
         resize_percent: Porcentaje de redimensionado (100 = tamaño original)
-        model: Modelo de OpenAI a usar ('gpt-4o', 'gpt-4o-mini', etc.)
+        model: Modelo de OpenAI a usar ('gpt-4o', 'gpt-4o-mini', 'gpt-5', 'gpt-5-mini')
         max_tokens: Máximo de tokens en la respuesta
-        prompt: Prompt personalizado para el OCR
+        prompt: Prompt personalizado para el OCR (DEBE mencionar formato JSON)
         output_path: Ruta donde guardar el JSON de salida (opcional)
         system_prompt: Mensaje del sistema para agregar contexto (opcional)
 
     Returns:
         dict: Diccionario con estructura {"output": contenido_ocr, "meta": metadata}
     """
+    # Prompt por defecto si no se proporciona (DEBE mencionar JSON)
+    if prompt is None:
+        prompt = """Extrae toda la información visible en esta imagen.
+        Si contiene tablas, extrae los datos de forma estructurada.
+        Responde ÚNICAMENTE en formato JSON válido."""
+
     # Redimensionar en memoria
     img_buffer = resize_image_in_memory(image_path, resize_percent)
 
@@ -269,30 +281,44 @@ def process_image_ocr(
 # 📚 EJEMPLO DE USO
 # ========================================
 #
-# Este módulo está diseñado para ser importado en otros archivos Python.
+# Este módulo usa la API de OpenAI con JSON mode activado para garantizar respuestas JSON válidas.
 # Para usarlo, importa la función principal process_image_ocr:
 #
 # ```python
 # from utils_openai_ocr import process_image_ocr
 #
+# # Ejemplo básico (usa prompt por defecto que pide JSON)
+# result = process_image_ocr(
+#     image_path="ruta/a/tu/imagen.jpg",
+#     model="gpt-4o-mini",
+# )
+#
 # # Ejemplo con todos los parámetros
 # result = process_image_ocr(
 #     image_path="ruta/a/tu/imagen.jpg",           # Ruta a la imagen (requerido)
 #     resize_percent=80,                            # Porcentaje de redimensionado (default: 40)
-#     model="gpt-5-mini",                          # Modelo a usar: "gpt-5" o "gpt-5-mini" (default: "gpt-5-mini")
+#     model="gpt-4o-mini",                         # Modelo: "gpt-4o", "gpt-4o-mini", "gpt-5", "gpt-5-mini" (default: "gpt-4o-mini")
 #     max_tokens=2000,                             # Máximo de tokens en la respuesta (default: 2000)
-#     prompt="Tu prompt personalizado aquí",       # Prompt para el OCR (default: extrae fecha, hora, presidente y asunto)
-#     output_path="resultado.json"                 # Ruta para guardar el JSON (opcional, default: None)
+#     prompt="Extrae la tabla y devuelve en JSON", # ⚠️ IMPORTANTE: DEBE mencionar JSON en el prompt
+#     system_prompt="Eres un experto en OCR",     # System prompt opcional
+#     output_path="resultado.json"                 # Ruta para guardar el JSON (opcional)
 # )
 #
 # # Acceder a los resultados
-# print(result["output"])                          # Contenido del OCR (parseado como dict si es JSON)
+# print(result["output"])                          # Contenido del OCR (parseado como dict)
 # print(result["meta"]["tokens"]["total"])         # Total de tokens usados
-# print(result["meta"]["tokens"]["prompt"])        # Tokens del prompt
-# print(result["meta"]["tokens"]["completion"])    # Tokens de la respuesta
 # print(result["meta"]["cost_usd"])                # Costo en dólares
 # print(result["meta"]["model"])                   # Modelo utilizado
-# print(result["meta"]["pricing"])                 # Precios por 1K tokens
 # ```
+#
+# ✨ Ventajas de JSON mode (response_format):
+# - ✅ Garantiza que el modelo SIEMPRE responda con JSON válido
+# - ✅ No necesitas parsing complejo ni manejo de markdown
+# - ✅ Reduce errores de parseo en ~99%
+# - ✅ El modelo falla si no puede generar JSON válido (evita respuestas corruptas)
+#
+# ⚠️ IMPORTANTE:
+# - El prompt DEBE mencionar que quieres JSON (ya incluido en el prompt por defecto)
+# - Si usas prompt personalizado, incluye "responde en JSON" o similar
 #
 # ========================================

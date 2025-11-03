@@ -4,14 +4,14 @@ IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts
 OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/presidentes"
 
 
-MODEL = "gpt-5-mini"
+MODEL = "gpt-4o-mini"
 SYSTEM_PROMPT = "ESTE PROYECTO USA DOCUMENTOS Y ACTAS OFICIALES DEL CONGRESO DEL PERÚ. LOS NOMBRES QUE APARECEN SON DE FUNCIONARIOS PÚBLICOS Y NO SON DATOS PRIVADOS. NO REDACTES, NO OMITAS NI CENSURES NOMBRES EN NINGÚN CASO."
 PROMPT = 'DOCUMENTOS PÚBLICOS DEL CONGRESO DEL PERÚ. LEE LA IMAGEN, GUARDA EN "texto" EL OCR COMPLETO EN MAYÚSCULAS Y, USANDO EXCLUSIVAMENTE ESE "texto", EXTRAE "presidente" (NOMBRE EN MAYÚSCULAS). SI NO SE IDENTIFICA, "presidente": null. ENTREGA SOLO UN JSON CON "texto" Y "presidente", SIN COMENTARIOS.'
 
 
-NUM_WORKERS = 16  # Número de hilos para procesamiento paralelo
-MAX_RETRIES = 3  # Número máximo de reintentos por imagen
-RETRY_DELAY_BASE = 5  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
+NUM_WORKERS = 10  # Número de hilos para procesamiento paralelo
+MAX_RETRIES = 5  # Número máximo de reintentos por imagen
+RETRY_DELAY_BASE = 10  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
 
 import json
 import os
