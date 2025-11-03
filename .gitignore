@@ -2,6 +2,10 @@
 data/
 extract_ocr/
 
+# Ignorar archivos .rar, .zip
+*.rar
+*.zip
+
 # Modelos y cache
 notebooks/**/*pth
 validation/**/*.pt
