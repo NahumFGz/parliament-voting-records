@@ -9,7 +9,7 @@ from ultralytics import YOLO
 
 # ⚙️ Configuraciones
 base_dir = "/home/nahumfg/GithubProjects/parliament-voting-records/data/procesamiento_todas_votaciones/b_zonas"
-model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_filas/experiments/yolo11s_img480_bs32_fold_10/weights/best.pt"
+model_path = "/home/nahumfg/GithubProjects/parliament-voting-records/validation/yolo_filas/experiments/yolo11n_img480_bs32_fold_8/weights/best.pt"
 
 # 🏷️ Prefijo para buscar imágenes de entrada y etiquetar imágenes de salida
 PREFIX = "colyolo_"  # Busca archivos que empiezan con este prefijo
