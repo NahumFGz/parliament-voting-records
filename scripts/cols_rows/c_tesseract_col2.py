@@ -11,13 +11,13 @@ from PIL import Image
 from tqdm import tqdm
 
 # Directorios de entrada y salida
-COLUMN_NAME = "columna_1"
+COLUMN_NAME = "columna_2"
 DIR_NAMES_CSV = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/dir_names.csv"
 CONGRESISTAS_PARQUET = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/congresistas_images.parquet"
 OUTPUT_DIR = f"/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/{COLUMN_NAME}"
 
 # Configuración de paralelización
-NUM_WORKERS = 14  # Número de procesos paralelos (ajustar según CPU disponibles)
+NUM_WORKERS = 10  # Número de procesos paralelos (ajustar según CPU disponibles)
 
 
 def natural_sort_key(text):
@@ -71,14 +71,35 @@ def process_image_with_index(args):
     return index, text
 
 
+def get_processed_document_ids(output_dir):
+    """
+    Lee los archivos JSON existentes en el directorio de salida
+    y retorna un set con los IDs de documentos ya procesados.
+    """
+    processed_ids = set()
+
+    if not os.path.exists(output_dir):
+        return processed_ids
+
+    # Buscar todos los archivos .json en el directorio
+    for filename in os.listdir(output_dir):
+        if filename.endswith(".json"):
+            # El nombre del archivo es el UUID del documento
+            doc_id = filename.replace(".json", "")
+            processed_ids.add(doc_id)
+
+    return processed_ids
+
+
 def process_images():
     """
     Procesa las imágenes:
     1. Lee dir_names.csv
     2. Filtra congresistas_images.parquet
-    3. Aplica OCR a cada imagen
-    4. Agrupa resultados por documento y página
-    5. Guarda JSONs
+    3. Detecta documentos ya procesados
+    4. Aplica OCR a cada imagen de documentos pendientes
+    5. Agrupa resultados por documento y página
+    6. Guarda JSONs
     """
     print("=" * 70)
     print("🚀 INICIANDO PROCESAMIENTO DE OCR EN COLUMNAS")
@@ -116,8 +137,13 @@ def process_images():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     print(f"✓ Directorio de salida: {OUTPUT_DIR}")
 
-    # 4. Agrupar por documento
-    print("\n🔍 4. Agrupando datos por documento...")
+    # 4. Detectar documentos ya procesados
+    print("\n🔍 4. Detectando documentos ya procesados...")
+    processed_doc_ids = get_processed_document_ids(OUTPUT_DIR)
+    print(f"✓ Se encontraron {len(processed_doc_ids)} documentos ya procesados")
+
+    # 5. Agrupar por documento
+    print("\n🔍 5. Agrupando datos por documento...")
     documents = defaultdict(lambda: defaultdict(list))
 
     # Agrupar las filas por documento y página
@@ -128,15 +154,31 @@ def process_images():
 
         doc_id, page = extract_document_id_and_page(dir_name)
         if doc_id and page:
-            documents[doc_id][page].append((image_path, image_name))
+            # Solo agregar si el documento NO ha sido procesado
+            if doc_id not in processed_doc_ids:
+                documents[doc_id][page].append((image_path, image_name))
 
-    print(f"✓ Se encontraron {len(documents)} documentos únicos")
+    total_documents = len(documents) + len(processed_doc_ids)
+    print(f"✓ Documentos totales: {total_documents}")
+    print(f"✓ Documentos ya procesados: {len(processed_doc_ids)}")
+    print(f"✓ Documentos pendientes: {len(documents)}")
+
+    if len(documents) == 0:
+        print("\n🎉 ¡Todos los documentos ya han sido procesados!")
+        print(f"📊 Resumen:")
+        print(f"   - Documentos procesados: {len(processed_doc_ids)}")
+        print(f"   - JSONs en: {OUTPUT_DIR}")
+        print("=" * 70)
+        return
+
     print(f"✓ Total de páginas a procesar: {sum(len(pages) for pages in documents.values())}")
 
-    # 5. Procesar cada documento
-    print("\n🔬 5. Procesando OCR en imágenes...")
+    # 6. Procesar cada documento
+    print("\n🔬 6. Procesando OCR en imágenes...")
     print(f"⚙️  Usando {NUM_WORKERS} workers en paralelo")
-    total_images = len(df_filtered)
+
+    # Calcular total de imágenes pendientes
+    total_images = sum(len(images) for pages in documents.values() for images in pages.values())
 
     with ProcessPoolExecutor(max_workers=NUM_WORKERS) as executor:
         with tqdm(total=total_images, desc="Procesando imágenes", unit="img") as pbar:
@@ -176,8 +218,10 @@ def process_images():
 
     print(f"\n✅ ¡Proceso completado!")
     print(f"📊 Resumen:")
-    print(f"   - Documentos procesados: {len(documents)}")
-    print(f"   - Imágenes procesadas: {total_images}")
+    print(f"   - Documentos procesados en esta ejecución: {len(documents)}")
+    print(f"   - Documentos ya existentes: {len(processed_doc_ids)}")
+    print(f"   - Total de documentos: {len(documents) + len(processed_doc_ids)}")
+    print(f"   - Imágenes procesadas en esta ejecución: {total_images}")
     print(f"   - JSONs guardados en: {OUTPUT_DIR}")
     print("=" * 70)
 
