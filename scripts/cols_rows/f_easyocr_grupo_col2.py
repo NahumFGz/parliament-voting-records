@@ -20,7 +20,7 @@ OUTPUT_DIR = (
 # Configuración de EasyOCR
 USE_GPU = True  # Cambiar a False si no tienes GPU con CUDA
 LANGUAGES = ["es"]  # Español
-BATCH_SIZE = 128  # Número de imágenes a procesar en lote (ajustar según VRAM disponible)
+BATCH_SIZE = 500  # Número de imágenes a procesar en lote (ajustar según VRAM disponible)
 
 # Variable global para el reader de EasyOCR (se inicializa una sola vez)
 reader = None
@@ -136,8 +136,32 @@ def process_images():
         return
 
     dir_names_df = pd.read_csv(DIR_NAMES_CSV)
-    dir_names_set = set(dir_names_df["dir_name"].tolist())
-    print(f"✓ Se encontraron {len(dir_names_set)} dir_names únicos")
+    print(f"✓ Se encontraron {len(dir_names_df)} dir_names totales")
+
+    # Filtrar dir_names que ya fueron procesados
+    # Los JSONs se guardan con el UUID (sin _pageXXX_), así que extraemos el UUID de cada dir_name
+    existing_jsons = set()
+    if os.path.exists(OUTPUT_DIR):
+        existing_jsons = {
+            f.replace(".json", "") for f in os.listdir(OUTPUT_DIR) if f.endswith(".json")
+        }
+        print(f"✓ Se encontraron {len(existing_jsons)} documentos ya procesados")
+
+    # Filtrar dir_names cuyos UUIDs ya existen
+    def get_uuid_from_dirname(dir_name):
+        """Extrae el UUID del dir_name (quita _pageXXX_)"""
+        doc_id, _ = extract_document_id_and_page(dir_name)
+        return doc_id
+
+    dir_names_df["uuid"] = dir_names_df["dir_name"].apply(get_uuid_from_dirname)
+    dir_names_df_filtered = dir_names_df[~dir_names_df["uuid"].isin(existing_jsons)]
+    dir_names_set = set(dir_names_df_filtered["dir_name"].tolist())
+
+    print(f"✓ Después de filtrar procesados: {len(dir_names_set)} dir_names a procesar")
+
+    if len(dir_names_set) == 0:
+        print("⚠️  No hay dir_names nuevos para procesar (todos ya fueron procesados)")
+        return
 
     # 2. Leer y filtrar parquet
     print("\n📂 2. Leyendo y filtrando congresistas_images.parquet...")
