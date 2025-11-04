@@ -11,13 +11,13 @@ from PIL import Image
 from tqdm import tqdm
 
 # Directorios de entrada y salida
-COLUMN_NAME = "columna_3"
+COLUMN_NAME = "columna_2"
 DIR_NAMES_CSV = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/dir_names.csv"
 CONGRESISTAS_PARQUET = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/congresistas_images.parquet"
 OUTPUT_DIR = f"/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/{COLUMN_NAME}"
 
 # Configuración de paralelización
-NUM_WORKERS = 10  # Número de procesos paralelos (ajustar según CPU disponibles)
+NUM_WORKERS = 7  # Número de procesos paralelos (ajustar según CPU disponibles)
 
 
 def natural_sort_key(text):
