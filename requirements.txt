@@ -19,3 +19,5 @@ selenium
 pdf2image
 openai
 seaborn
+pyarrow
+fastparquet
