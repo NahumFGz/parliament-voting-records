@@ -11,6 +11,7 @@ notebooks/**/*pth
 validation/**/*.pt
 validation/**/*.cache
 others/ocr/models/**
+scripts/**/models
 
 # Experimentos de validaciones
 validation/**/experiments/
