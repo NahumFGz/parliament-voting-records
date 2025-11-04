@@ -4,26 +4,34 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+import cv2
 import easyocr
 import pandas as pd
+import pytesseract
+from doctr.io import DocumentFile
+from doctr.models import ocr_predictor
+from paddleocr import PaddleOCR
 from tqdm import tqdm
 
 # Directorios de entrada y salida
 TIPO = "grupo_parlamentario"
-COLUMN_NAME = "columna_2"
+COLUMN_NAME = "columna_3"
 DIR_NAMES_CSV = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/dir_names.csv"
 PARQUET = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/grupo_parlamentario_images.parquet"
 OUTPUT_DIR = (
     f"/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/{TIPO}_{COLUMN_NAME}"
 )
 
-# Configuración de EasyOCR
-USE_GPU = True  # Cambiar a False si no tienes GPU con CUDA
-LANGUAGES = ["es"]  # Español
-BATCH_SIZE = 500  # Número de imágenes a procesar en lote (ajustar según VRAM disponible)
+# Configuración de OCR
+USE_GPU = True
+LANGUAGES = ["es"]
+MODEL_PRIORITY = ["PaddleOCR", "docTR", "EasyOCR", "Tesseract"]
 
-# Variable global para el reader de EasyOCR (se inicializa una sola vez)
-reader = None
+# Variables globales para los readers de OCR (se inicializan una sola vez)
+easyocr_reader = None
+doctr_reader = None
+paddleocr_reader = None
+# Tesseract no necesita reader global, usa pytesseract directamente
 
 
 def natural_sort_key(text):
@@ -50,67 +58,153 @@ def extract_document_id_and_page(dir_name):
     return None, None
 
 
-def initialize_reader():
+def initialize_readers():
     """
-    Inicializa el reader de EasyOCR una sola vez.
+    Inicializa los readers de OCR según MODEL_PRIORITY.
     Esto es importante porque la inicialización carga los modelos en GPU/memoria.
     """
-    global reader
-    if reader is None:
-        print(f"\n🔧 Inicializando EasyOCR...")
-        print(f"   - GPU habilitada: {USE_GPU}")
-        print(f"   - Idiomas: {LANGUAGES}")
-        reader = easyocr.Reader(LANGUAGES, gpu=USE_GPU, verbose=False)
-        print("✓ EasyOCR inicializado correctamente")
-    return reader
+    global easyocr_reader, doctr_reader, paddleocr_reader
+
+    print(f"\n🔧 Inicializando modelos OCR...")
+    print(f"   - GPU habilitada: {USE_GPU}")
+    print(f"   - Idiomas: {LANGUAGES}")
+    print(f"   - Prioridad de modelos: {MODEL_PRIORITY}")
+
+    for model_name in MODEL_PRIORITY:
+        try:
+            if model_name == "EasyOCR" and easyocr_reader is None:
+                print(f"   ⏳ Inicializando EasyOCR...")
+                easyocr_reader = easyocr.Reader(LANGUAGES, gpu=USE_GPU, verbose=False)
+                print(f"   ✓ EasyOCR inicializado correctamente")
+
+            elif model_name == "docTR" and doctr_reader is None:
+                print(f"   ⏳ Inicializando docTR...")
+                doctr_reader = ocr_predictor(
+                    det_arch="db_resnet50",
+                    reco_arch="crnn_vgg16_bn",
+                    pretrained=True,
+                )
+                print(f"   ✓ docTR inicializado correctamente")
+
+            elif model_name == "PaddleOCR" and paddleocr_reader is None:
+                print(f"   ⏳ Inicializando PaddleOCR...")
+                paddleocr_reader = PaddleOCR(
+                    use_angle_cls=True,
+                    lang="es",
+                    use_gpu=USE_GPU,
+                    show_log=False,
+                )
+                print(f"   ✓ PaddleOCR inicializado correctamente")
+
+            elif model_name == "Tesseract":
+                print(f"   ✓ Tesseract disponible (no requiere inicialización)")
+
+        except Exception as e:
+            print(f"   ⚠️  Error inicializando {model_name}: {e}")
+
+    print("✓ Modelos OCR inicializados")
 
 
-def apply_ocr_to_image(image_path, ocr_reader):
-    """
-    Aplica EasyOCR a una imagen y retorna el texto extraído.
-    Retorna string vacío si la imagen no existe o hay error.
-
-    Args:
-        image_path: Ruta a la imagen
-        ocr_reader: Instancia de easyocr.Reader
-    """
+def apply_easyocr(image_path):
+    """Aplica EasyOCR a una imagen."""
     try:
-        if not os.path.exists(image_path):
+        if easyocr_reader is None:
             return ""
-
-        # Aplicar OCR con EasyOCR
-        # readtext retorna una lista de tuplas: (bbox, text, confidence)
-        result = ocr_reader.readtext(image_path, detail=0)  # detail=0 retorna solo texto
-
-        # Unir todos los textos detectados con saltos de línea
+        result = easyocr_reader.readtext(image_path, detail=0)
         text = "\n".join(result)
         return text.strip()
     except Exception as e:
         return ""
 
 
-def process_images_in_batches(image_paths, ocr_reader, batch_size):
+def apply_doctr(image_path):
+    """Aplica docTR a una imagen."""
+    try:
+        if doctr_reader is None:
+            return ""
+        doc = DocumentFile.from_images(image_path)
+        result = doctr_reader(doc)
+
+        # Extraer texto de los resultados
+        text_lines = []
+        for page in result.pages:
+            for block in page.blocks:
+                for line in block.lines:
+                    line_text = " ".join([word.value for word in line.words])
+                    text_lines.append(line_text)
+
+        return "\n".join(text_lines).strip()
+    except Exception as e:
+        return ""
+
+
+def apply_paddleocr(image_path):
+    """Aplica PaddleOCR a una imagen."""
+    try:
+        if paddleocr_reader is None:
+            return ""
+        result = paddleocr_reader.ocr(image_path, cls=True)
+
+        # Extraer texto de los resultados
+        text_lines = []
+        if result and result[0]:
+            for line in result[0]:
+                if line and len(line) > 1:
+                    text_lines.append(line[1][0])
+
+        return "\n".join(text_lines).strip()
+    except Exception as e:
+        return ""
+
+
+def apply_tesseract(image_path):
+    """Aplica Tesseract a una imagen."""
+    try:
+        img = cv2.imread(image_path)
+        if img is None:
+            return ""
+        text = pytesseract.image_to_string(img, lang="spa")
+        return text.strip()
+    except Exception as e:
+        return ""
+
+
+def apply_ocr_to_image(image_path):
     """
-    Procesa múltiples imágenes en lotes para mayor eficiencia.
+    Aplica OCR a una imagen usando múltiples modelos según MODEL_PRIORITY.
+    Retorna el texto del primer modelo que devuelva resultado no vacío.
+    Retorna string vacío si ningún modelo devuelve resultado.
 
     Args:
-        image_paths: Lista de rutas de imágenes
-        ocr_reader: Instancia de easyocr.Reader
-        batch_size: Tamaño del lote
-
-    Returns:
-        Lista de textos extraídos en el mismo orden que image_paths
+        image_path: Ruta a la imagen
     """
-    results = []
+    if not os.path.exists(image_path):
+        return ""
 
-    for i in range(0, len(image_paths), batch_size):
-        batch = image_paths[i : i + batch_size]
+    # Intentar cada modelo en el orden especificado
+    for model_name in MODEL_PRIORITY:
+        try:
+            text = ""
 
-        for img_path in batch:
-            text = apply_ocr_to_image(img_path, ocr_reader)
-            results.append(text)
+            if model_name == "EasyOCR":
+                text = apply_easyocr(image_path)
+            elif model_name == "docTR":
+                text = apply_doctr(image_path)
+            elif model_name == "PaddleOCR":
+                text = apply_paddleocr(image_path)
+            elif model_name == "Tesseract":
+                text = apply_tesseract(image_path)
 
-    return results
+            # Si encontramos texto, retornar inmediatamente
+            if text:
+                return text
+
+        except Exception as e:
+            # Si hay error, continuar con el siguiente modelo
+            continue
+
+    # Si ningún modelo devolvió resultado, retornar vacío
+    return ""
 
 
 def process_images():
@@ -118,16 +212,16 @@ def process_images():
     Procesa las imágenes:
     1. Lee dir_names.csv
     2. Filtra congresistas_images.parquet
-    3. Aplica OCR a cada imagen usando EasyOCR con GPU
+    3. Aplica OCR a cada imagen usando múltiples modelos con fallback
     4. Agrupa resultados por documento y página
     5. Guarda JSONs
     """
     print("=" * 70)
-    print("🚀 INICIANDO PROCESAMIENTO DE OCR EN COLUMNAS (EasyOCR + GPU)")
+    print("🚀 INICIANDO PROCESAMIENTO DE OCR EN COLUMNAS (Multi-Modelo + GPU)")
     print("=" * 70)
 
-    # Inicializar EasyOCR
-    ocr_reader = initialize_reader()
+    # Inicializar modelos OCR
+    initialize_readers()
 
     # 1. Leer dir_names.csv
     print("\n📂 1. Leyendo dir_names.csv...")
@@ -203,8 +297,9 @@ def process_images():
     print(f"✓ Total de páginas a procesar: {sum(len(pages) for pages in documents.values())}")
 
     # 5. Procesar cada documento
-    print("\n🔬 5. Procesando OCR en imágenes con EasyOCR...")
-    print(f"⚙️  Procesamiento en GPU (batch_size={BATCH_SIZE})")
+    print("\n🔬 5. Procesando OCR en imágenes con múltiples modelos...")
+    print(f"⚙️  Procesamiento secuencial en GPU")
+    print(f"⚙️  Prioridad de modelos: {' → '.join(MODEL_PRIORITY)}")
     total_images = len(df_filtered)
 
     with tqdm(total=total_images, desc="Procesando imágenes", unit="img") as pbar:
@@ -219,10 +314,10 @@ def process_images():
                 # Extraer solo las rutas de imágenes
                 image_paths = [img_path for img_path, _ in images_sorted]
 
-                # Procesar imágenes en lotes
+                # Procesar imágenes secuencialmente
                 page_texts = []
                 for img_path in image_paths:
-                    text = apply_ocr_to_image(img_path, ocr_reader)
+                    text = apply_ocr_to_image(img_path)
                     page_texts.append(text)
                     pbar.update(1)
 
