@@ -1,0 +1,12 @@
+{
+  "search.exclude": {
+    "venv_*/**": true,
+    "data/**": true,
+    "extract_ocr/**": true,
+  },
+  "files.watcherExclude": {
+    "venv_*/**": true,
+    "data/**": true,
+    "extract_ocr/**": true,
+  }
+}

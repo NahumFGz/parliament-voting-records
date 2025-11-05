@@ -8,7 +8,10 @@
     ],
     // 🔕 apaga el aviso por imports "privados" (caso ultralytics.YOLO)
     "reportPrivateImportUsage": "none",
+    "reportMissingTypeStubs": "none",
+    "reportMissingImports": "none",
     "reportCallIssue": "none",
     "reportUnknownVariableType": "none",
-    "reportUnknownMemberType": "none"
+    "reportUnknownMemberType": "none",
+    "reportArgumentType": "none"
 }
