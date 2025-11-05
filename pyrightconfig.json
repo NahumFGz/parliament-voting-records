@@ -1,0 +1,14 @@
+{
+    "typeCheckingMode": "basic",
+    "exclude": [
+        "venv_*/",
+        "data/",
+        "extract_ocr/",
+        "validation/**/experiments/",
+    ],
+    // 🔕 apaga el aviso por imports "privados" (caso ultralytics.YOLO)
+    "reportPrivateImportUsage": "none",
+    "reportCallIssue": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownMemberType": "none"
+}
