@@ -25,7 +25,7 @@ OUTPUT_DIR = (
 # Configuración de OCR
 USE_GPU = True
 LANGUAGES = ["es"]
-MODEL_PRIORITY = ["EasyOCR", "Tesseract", "PaddleOCR", "docTR"]
+MODEL_PRIORITY = ["Tesseract", "PaddleOCR", "docTR", "EasyOCR"]
 
 # Variables globales para los readers de OCR (se inicializan una sola vez)
 easyocr_reader = None
