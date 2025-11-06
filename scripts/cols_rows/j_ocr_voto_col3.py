@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 # Directorios de entrada y salida
 TIPO = "voto"
-COLUMN_NAME = "columna_2"
+COLUMN_NAME = "columna_3"
 DIR_NAMES_CSV = "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/dir_names.csv"
 PARQUET = (
     "/home/nahumfg/GithubProjects/parliament-voting-records/data/col_rows/votos_images.parquet"
