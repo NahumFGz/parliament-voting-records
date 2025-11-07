@@ -4,11 +4,11 @@ IMAGE_CSV_PATH = "/home/nahumfg/GithubProjects/parliament-voting-records/scripts
 OUTPUT_DIR = "/home/nahumfg/GithubProjects/parliament-voting-records/extract_ocr/voto_oral"
 
 
-MODEL = "gpt-5-mini"
+MODEL = "gpt-4o-mini"
 PROMPT = 'EN BASE AL TEXTO DE LA IMAGEN, DEVUELVE ÚNICAMENTE UN JSON CON DOS CLAVES: "texto" (TEXTO UTILIZADO PARA LA EXTRACCIÓN, EN MAYÚSCULAS) Y "votos_orales" (ARREGLO DE OBJETOS {"nombre": NOMBRE_EN_MAYÚSCULAS, "voto": "A FAVOR"|"EN CONTRA"|"ABSTENCIÓN"}); SI FALTA ALGÚN DATO USAR null; SI SE MENCIONA QUE EL PRESIDENTE VOTA PERO SU NOMBRE NO APARECE, USAR "PRESIDENTE DE SESIÓN"; SI SU NOMBRE SÍ APARECE, USAR ESE NOMBRE; NO AGREGUES TEXTO ADICIONAL NI COMENTARIOS, SOLO EL JSON.'
 
 
-NUM_WORKERS = 16  # Número de hilos para procesamiento paralelo
+NUM_WORKERS = 10  # Número de hilos para procesamiento paralelo
 MAX_RETRIES = 3  # Número máximo de reintentos por imagen
 RETRY_DELAY_BASE = 5  # Segundos de espera base entre reintentos (se multiplica exponencialmente)
 
