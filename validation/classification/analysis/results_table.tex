@@ -1,0 +1,47 @@
+
+\begin{table}[h]
+\centering
+\caption{Resultados de Validación Cruzada para Clasificación de Imágenes}
+\label{tab:cv_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Experimento} & \textbf{Accuracy} & \textbf{F1-Score} & \textbf{Precision} & \textbf{Recall} \\
+\midrule
+vgg16\_lr1e5\_bs32 & 0.999 ± 0.003 & 0.999 ± 0.003 & 0.999 ± 0.003 & 0.999 ± 0.003 \\
+(vgg16) & Wilson: [0.995, 1.000], IC-t: [0.996, 1.000] & [0.996, 1.000] & & \\
+vgg16\_lr1e6\_bs32 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 \\
+(vgg16) & Wilson: [0.996, 1.000], IC-t: [0.998, 1.000] & [0.998, 1.000] & & \\
+mobilenet\_v2\_lr1e6\_bs32 & 0.967 ± 0.014 & 0.967 ± 0.014 & 0.969 ± 0.012 & 0.967 ± 0.014 \\
+(mobilenet\_v2) & Wilson: [0.956, 0.975], IC-t: [0.957, 0.977] & [0.957, 0.977] & & \\
+densenet121\_lr1e6\_bs32 & 0.998 ± 0.005 & 0.998 ± 0.005 & 0.998 ± 0.005 & 0.998 ± 0.005 \\
+(densenet121) & Wilson: [0.993, 0.999], IC-t: [0.994, 1.000] & [0.994, 1.000] & & \\
+resnet50\_lr1e5\_bs32 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 \\
+(resnet50) & Wilson: [0.997, 1.000], IC-t: [1.000, 1.000] & [1.000, 1.000] & & \\
+mobilenet\_v2\_lr1e5\_bs32 & 0.995 ± 0.005 & 0.995 ± 0.005 & 0.995 ± 0.005 & 0.995 ± 0.005 \\
+(mobilenet\_v2) & Wilson: [0.989, 0.997], IC-t: [0.991, 0.998] & [0.991, 0.998] & & \\
+resnet50\_lr1e4\_bs32 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 \\
+(resnet50) & Wilson: [0.996, 1.000], IC-t: [0.998, 1.000] & [0.998, 1.000] & & \\
+densenet121\_lr1e5\_bs32 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 \\
+(densenet121) & Wilson: [0.996, 1.000], IC-t: [0.998, 1.000] & [0.998, 1.000] & & \\
+vgg16\_lr1e4\_bs32 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 \\
+(vgg16) & Wilson: [0.997, 1.000], IC-t: [1.000, 1.000] & [1.000, 1.000] & & \\
+efficientnet\_b0\_lr1e6\_bs32 & 0.957 ± 0.022 & 0.957 ± 0.022 & 0.959 ± 0.019 & 0.957 ± 0.022 \\
+(efficientnet\_b0) & Wilson: [0.945, 0.967], IC-t: [0.941, 0.973] & [0.942, 0.973] & & \\
+resnet50\_lr1e6\_bs32 & 0.984 ± 0.012 & 0.984 ± 0.012 & 0.985 ± 0.010 & 0.984 ± 0.012 \\
+(resnet50) & Wilson: [0.975, 0.989], IC-t: [0.975, 0.992] & [0.975, 0.992] & & \\
+mobilenet\_v2\_lr1e4\_bs32 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 \\
+(mobilenet\_v2) & Wilson: [0.996, 1.000], IC-t: [0.998, 1.000] & [0.998, 1.000] & & \\
+efficientnet\_b0\_lr1e5\_bs32 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 & 0.999 ± 0.002 \\
+(efficientnet\_b0) & Wilson: [0.996, 1.000], IC-t: [0.998, 1.000] & [0.998, 1.000] & & \\
+efficientnet\_b0\_lr1e4\_bs32 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 \\
+(efficientnet\_b0) & Wilson: [0.997, 1.000], IC-t: [1.000, 1.000] & [1.000, 1.000] & & \\
+densenet121\_lr1e4\_bs32 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 & 1.000 ± 0.000 \\
+(densenet121) & Wilson: [0.997, 1.000], IC-t: [1.000, 1.000] & [1.000, 1.000] & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Valores reportados como media ± desviación estándar de validación cruzada 5-fold.
+\item Todas las métricas calculadas usando promedio macro.
+\end{tablenotes}
+\end{table}

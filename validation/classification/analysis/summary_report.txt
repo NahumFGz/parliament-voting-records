@@ -1,0 +1,52 @@
+
+RESUMEN EJECUTIVO - VALIDACIÓN CRUZADA
+==================================================
+
+Número de experimentos: 15
+Modelos evaluados: vgg16, mobilenet_v2, densenet121, resnet50, efficientnet_b0
+
+MEJORES RESULTADOS:
+------------------------------
+
+Mejor Accuracy (CV):
+resnet50_lr1e5_bs32 (resnet50) - 1.000 ± 0.000
+IC 95%: [1.000, 1.000]
+
+Mejor F1-Score (CV):
+resnet50_lr1e5_bs32 (resnet50) - 1.000 ± 0.000
+IC 95%: [1.000, 1.000]
+
+Mejor Accuracy (Test):
+vgg16_lr1e5_bs32 (vgg16) - 1.000
+
+Mejor F1-Score (Test):
+vgg16_lr1e5_bs32 (vgg16) - 1.000
+
+ANÁLISIS DE VARIABILIDAD:
+------------------------------
+
+Experimento más consistente (menor std en accuracy):
+resnet50_lr1e5_bs32 (resnet50) - std = 0.0000
+
+Experimento menos consistente (mayor std en accuracy):
+efficientnet_b0_lr1e6_bs32 (efficientnet_b0) - std = 0.0220
+
+EFICIENCIA TEMPORAL:
+------------------------------
+
+Experimento más rápido:
+vgg16_lr1e4_bs32 (vgg16) - 174.2s por fold
+
+Experimento más lento:
+mobilenet_v2_lr1e6_bs32 (mobilenet_v2) - 1637.4s por fold
+
+RECOMENDACIONES:
+------------------------------
+
+1. Para máxima precisión: resnet50_lr1e5_bs32 (resnet50)
+2. Para consistencia: resnet50_lr1e5_bs32 (resnet50)
+3. Para eficiencia: vgg16_lr1e4_bs32 (vgg16)
+
+NOTA: Todos los resultados fueron obtenidos mediante validación cruzada 
+estratificada con conjuntos de test independientes, garantizando la 
+validez estadística de las comparaciones.

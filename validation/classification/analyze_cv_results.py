@@ -30,8 +30,10 @@ warnings.filterwarnings("ignore")
 plt.style.use("seaborn-v0_8")
 sns.set_palette("husl")
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-VALIDATION_DIR = PROJECT_ROOT  # Ya estamos en validation_cv/
+PROJECT_ROOT = Path(
+    "/home/nahumfg/GithubProjects/parliament-voting-records/validation/classification"
+)
+VALIDATION_DIR = PROJECT_ROOT / "experiments"
 OUTPUT_DIR = PROJECT_ROOT / "analysis"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
