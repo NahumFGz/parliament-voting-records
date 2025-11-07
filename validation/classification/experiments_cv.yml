@@ -10,7 +10,7 @@
 experiments:
   # 1. DenseNet121 (3)
   - name: densenet121_lr1e4_bs32
-    execute: true
+    execute: false
     params:
       model: densenet121
       lr: 1e-4
@@ -20,7 +20,7 @@ experiments:
       k_folds: 10
 
   - name: densenet121_lr1e5_bs32
-    execute: true
+    execute: false
     params:
       model: densenet121
       lr: 1e-5
@@ -30,7 +30,7 @@ experiments:
       k_folds: 10
 
   - name: densenet121_lr1e6_bs32
-    execute: true
+    execute: false
     params:
       model: densenet121
       lr: 1e-6
@@ -41,7 +41,7 @@ experiments:
 
   # 2. EfficientNet-B0 (3)
   - name: efficientnet_b0_lr1e4_bs32
-    execute: true
+    execute: false
     params:
       model: efficientnet_b0
       lr: 1e-4
@@ -51,7 +51,7 @@ experiments:
       k_folds: 10
 
   - name: efficientnet_b0_lr1e5_bs32
-    execute: true
+    execute: false
     params:
       model: efficientnet_b0
       lr: 1e-5
@@ -61,7 +61,7 @@ experiments:
       k_folds: 10
 
   - name: efficientnet_b0_lr1e6_bs32
-    execute: true
+    execute: false
     params:
       model: efficientnet_b0
       lr: 1e-6
@@ -72,7 +72,7 @@ experiments:
 
   # 3. MobileNetV2 (3)
   - name: mobilenet_v2_lr1e4_bs32
-    execute: true
+    execute: false
     params:
       model: mobilenet_v2
       lr: 1e-4
@@ -82,7 +82,7 @@ experiments:
       k_folds: 10
 
   - name: mobilenet_v2_lr1e5_bs32
-    execute: true
+    execute: false
     params:
       model: mobilenet_v2
       lr: 1e-5
